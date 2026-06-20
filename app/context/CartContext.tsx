@@ -27,7 +27,12 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     case 'ADD_ITEM': {
       const existing = state.items.find(i => i.id === action.payload.id);
       if (existing) {
-        return { ...state, items: state.items.map(i => i.id === action.payload.id ? { ...i, quantity: i.quantity + 1 } : i) };
+        return {
+          ...state,
+          items: state.items.map(i =>
+            i.id === action.payload.id ? { ...i, quantity: i.quantity + 1 } : i
+          ),
+        };
       }
       return { ...state, items: [...state.items, { ...action.payload, quantity: 1 }] };
     }
@@ -37,7 +42,12 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       if (action.payload.quantity <= 0) {
         return { ...state, items: state.items.filter(i => i.id !== action.payload.id) };
       }
-      return { ...state, items: state.items.map(i => i.id === action.payload.id ? { ...i, quantity: action.payload.quantity } : i) };
+      return {
+        ...state,
+        items: state.items.map(i =>
+          i.id === action.payload.id ? { ...i, quantity: action.payload.quantity } : i
+        ),
+      };
     case 'CLEAR_CART':
       return { ...state, items: [] };
     case 'TOGGLE_CART':
@@ -59,9 +69,15 @@ const CartContext = createContext<{
 } | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, { items: [], isOpen: false, isCheckoutOpen: false });
+  const [state, dispatch] = useReducer(cartReducer, {
+    items: [],
+    isOpen: false,
+    isCheckoutOpen: false,
+  });
+
   const totalItems = state.items.reduce((sum, i) => sum + i.quantity, 0);
   const totalPrice = state.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
   return (
     <CartContext.Provider value={{ state, dispatch, totalItems, totalPrice }}>
       {children}
