@@ -17,7 +17,6 @@ function showOrderNotification(newCount: number) {
       body: `${newCount} nouvelle${newCount > 1 ? 's' : ''} commande${newCount > 1 ? 's' : ''} en attente`,
       icon: '/favicon.ico',
       tag: 'new-order',
-      renotify: true,
     });
   }
 }
