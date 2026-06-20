@@ -1,13 +1,14 @@
 'use client';
 
-import { categories } from '@/app/data/menu';
+import { Category } from '@/app/data/menu';
 
 interface Props {
   active: string;
   onSelect: (id: string) => void;
+  categories: Category[];
 }
 
-export default function CategoryTabs({ active, onSelect }: Props) {
+export default function CategoryTabs({ active, onSelect, categories }: Props) {
   return (
     <div className="sticky top-0 z-20 bg-white border-b border-gray-100 shadow-sm">
       <div className="flex overflow-x-auto scrollbar-hide px-4 py-3 gap-2">
@@ -23,9 +24,13 @@ export default function CategoryTabs({ active, onSelect }: Props) {
           >
             <span>{cat.icon}</span>
             <span>{cat.name}</span>
-            <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-              active === cat.id ? 'bg-white/25 text-white' : 'bg-gray-200 text-gray-500'
-            }`}>{cat.count}</span>
+            <span
+              className={`text-xs px-1.5 py-0.5 rounded-full ${
+                active === cat.id ? 'bg-white/25 text-white' : 'bg-gray-200 text-gray-500'
+              }`}
+            >
+              {cat.count}
+            </span>
           </button>
         ))}
       </div>
