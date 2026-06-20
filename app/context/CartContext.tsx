@@ -10,6 +10,7 @@ export interface CartItem extends MenuItem {
 interface CartState {
   items: CartItem[];
   isOpen: boolean;
+  isCheckoutOpen: boolean;
 }
 
 type CartAction =
@@ -18,7 +19,8 @@ type CartAction =
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
   | { type: 'TOGGLE_CART' }
-  | { type: 'SET_CART_OPEN'; payload: boolean };
+  | { type: 'SET_CART_OPEN'; payload: boolean }
+  | { type: 'SET_CHECKOUT_OPEN'; payload: boolean };
 
 function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
@@ -42,6 +44,8 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       return { ...state, isOpen: !state.isOpen };
     case 'SET_CART_OPEN':
       return { ...state, isOpen: action.payload };
+    case 'SET_CHECKOUT_OPEN':
+      return { ...state, isCheckoutOpen: action.payload };
     default:
       return state;
   }
@@ -55,7 +59,7 @@ const CartContext = createContext<{
 } | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, { items: [], isOpen: false });
+  const [state, dispatch] = useReducer(cartReducer, { items: [], isOpen: false, isCheckoutOpen: false });
   const totalItems = state.items.reduce((sum, i) => sum + i.quantity, 0);
   const totalPrice = state.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   return (
