@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import {
   X, ChevronRight, ChevronLeft, MapPin, User, Phone,
-  CheckCircle, Clock, MessageCircle, Banknote,
+  CheckCircle, Clock, MessageCircle, Banknote, Package,
 } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
 import { saveOrder, generateOrderNumber } from '@/app/lib/orders';
@@ -376,6 +377,15 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   </span>
                 </div>
 
+                <Link
+                  href={`/track?order=${placedOrder.orderNumber}`}
+                  onClick={handleClose}
+                  className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-6 py-3.5 rounded-2xl font-bold text-sm transition-colors w-full justify-center"
+                >
+                  <Package className="w-5 h-5" />
+                  Suivre ma commande
+                </Link>
+
                 <a
                   href={buildWhatsAppUrl(placedOrder)}
                   target="_blank"
@@ -383,12 +393,12 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3.5 rounded-2xl font-semibold text-sm transition-colors w-full justify-center"
                 >
                   <MessageCircle className="w-5 h-5" />
-                  Suivre via WhatsApp
+                  Notifier via WhatsApp
                 </a>
 
                 <button
                   onClick={handleClose}
-                  className="text-amber-600 font-semibold text-sm hover:text-amber-700 transition-colors"
+                  className="text-gray-400 font-semibold text-sm hover:text-gray-600 transition-colors"
                 >
                   ← Retourner au menu
                 </button>
