@@ -7,22 +7,26 @@ import { LogOut, RefreshCw, Phone, MapPin, Clock, Bell, BellOff } from 'lucide-r
 
 function playNewOrderSound() {
   try {
-    const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-    const notes = [523, 659, 784, 1047];
-    notes.forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      const t = ctx.currentTime + i * 0.13;
-      gain.gain.setValueAtTime(0, t);
-      gain.gain.linearRampToValueAtTime(0.25, t + 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-      osc.start(t);
-      osc.stop(t + 0.35);
-    });
+    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = new AudioCtx();
+    // Classic phone ring: 440 Hz + 480 Hz mixed, two rings with a pause
+    for (let ring = 0; ring < 3; ring++) {
+      const t0 = ctx.currentTime + ring * 1.1;
+      [440, 480].forEach(freq => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, t0);
+        gain.gain.linearRampToValueAtTime(0.18, t0 + 0.05);
+        gain.gain.setValueAtTime(0.18, t0 + 0.65);
+        gain.gain.linearRampToValueAtTime(0, t0 + 0.75);
+        osc.start(t0);
+        osc.stop(t0 + 0.75);
+      });
+    }
   } catch {}
 }
 
