@@ -5,11 +5,27 @@ import { getOrders, updateOrderStatus } from '@/app/lib/orders';
 import { Order, OrderStatus } from '@/app/types/order';
 import { LogOut, RefreshCw, Phone, MapPin, Clock, Bell, BellOff } from 'lucide-react';
 
+async function requestNotificationPermission() {
+  if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+    await Notification.requestPermission();
+  }
+}
+
+function showOrderNotification(newCount: number) {
+  if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+    new Notification('🫕 Dar Ismail — Nouvelle commande !', {
+      body: `${newCount} nouvelle${newCount > 1 ? 's' : ''} commande${newCount > 1 ? 's' : ''} en attente`,
+      icon: '/favicon.ico',
+      tag: 'new-order',
+      renotify: true,
+    });
+  }
+}
+
 function playNewOrderSound() {
   try {
     const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     const ctx = new AudioCtx();
-    // Classic phone ring: 440 Hz + 480 Hz mixed, two rings with a pause
     for (let ring = 0; ring < 3; ring++) {
       const t0 = ctx.currentTime + ring * 1.1;
       [440, 480].forEach(freq => {
@@ -66,8 +82,15 @@ export default function AdminPage() {
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [filter, setFilter] = useState<OrderStatus | 'all'>('all');
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [notifPermission, setNotifPermission] = useState<NotificationPermission>('default');
   const prevNewCountRef = useRef(0);
   const isFirstLoadRef = useRef(true);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      setNotifPermission(Notification.permission);
+    }
+  }, [authed]);
 
   const loadOrders = useCallback(() => {
     const fresh = getOrders();
@@ -75,8 +98,9 @@ export default function AdminPage() {
     setLastRefresh(new Date());
 
     const currentNewCount = fresh.filter(o => o.status === 'new').length;
-    if (!isFirstLoadRef.current && currentNewCount > prevNewCountRef.current && soundEnabled) {
-      playNewOrderSound();
+    if (!isFirstLoadRef.current && currentNewCount > prevNewCountRef.current) {
+      showOrderNotification(currentNewCount);
+      if (soundEnabled) playNewOrderSound();
     }
     prevNewCountRef.current = currentNewCount;
     isFirstLoadRef.current = false;
@@ -98,6 +122,7 @@ export default function AdminPage() {
     e.preventDefault();
     if (password === ADMIN_PASSWORD) {
       setAuthed(true);
+      requestNotificationPermission();
     } else {
       setLoginError('Mot de passe incorrect');
     }
@@ -108,7 +133,6 @@ export default function AdminPage() {
     loadOrders();
   }
 
-  // Stats
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayOrders = orders.filter(o => o.createdAt >= today.getTime());
@@ -118,7 +142,6 @@ export default function AdminPage() {
 
   const displayed = filter === 'all' ? orders : orders.filter(o => o.status === filter);
 
-  /* ─── Login screen ─── */
   if (!authed) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
@@ -154,10 +177,8 @@ export default function AdminPage() {
     );
   }
 
-  /* ─── Admin dashboard ─── */
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -173,6 +194,20 @@ export default function AdminPage() {
             )}
           </div>
           <div className="flex items-center gap-2">
+            {notifPermission !== 'granted' && notifPermission !== 'denied' && (
+              <button
+                onClick={async () => {
+                  await requestNotificationPermission();
+                  if ('Notification' in window) setNotifPermission(Notification.permission);
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-600 text-xs font-semibold hover:bg-blue-100 transition-colors"
+              >
+                📲 Activer les notifications
+              </button>
+            )}
+            {notifPermission === 'denied' && (
+              <span className="text-xs text-gray-400 hidden sm:block">Notifications bloquées</span>
+            )}
             <button
               onClick={() => setSoundEnabled(s => !s)}
               className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
@@ -204,8 +239,6 @@ export default function AdminPage() {
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
-
-        {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100">
             <p className="text-3xl font-black text-orange-500">{activeCount}</p>
@@ -221,10 +254,8 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Filter tabs */}
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {(['all', 'new', 'preparing', 'on_the_way', 'delivered', 'cancelled'] as const).map(f => {
-            const label = f === 'all' ? `Toutes (${orders.length})` : STATUS_CONFIG[f].label;
             const count = f === 'all' ? orders.length : orders.filter(o => o.status === f).length;
             return (
               <button
@@ -242,7 +273,6 @@ export default function AdminPage() {
           })}
         </div>
 
-        {/* Orders list */}
         {displayed.length === 0 ? (
           <div className="bg-white rounded-3xl p-12 text-center shadow-sm">
             <div className="text-5xl mb-4">📋</div>
@@ -265,12 +295,10 @@ export default function AdminPage() {
                 Actualisé à {lastRefresh.toLocaleTimeString('fr-MA')}
               </p>
             )}
-
             {displayed.map(order => {
               const nextAction = NEXT_STATUS[order.status];
               const cfg = STATUS_CONFIG[order.status];
               const isNew = order.status === 'new';
-
               return (
                 <div
                   key={order.id}
@@ -279,7 +307,6 @@ export default function AdminPage() {
                   }`}
                 >
                   <div className="p-5">
-                    {/* Order header */}
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
@@ -298,8 +325,6 @@ export default function AdminPage() {
                         <p className="text-xs text-gray-400">💵 Espèces</p>
                       </div>
                     </div>
-
-                    {/* Customer */}
                     <div className="bg-gray-50 rounded-xl p-3 mb-4 space-y-1.5">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-gray-900">{order.customer.name}</span>
@@ -319,8 +344,6 @@ export default function AdminPage() {
                         <p className="text-xs text-gray-500">📝 {order.customer.notes}</p>
                       )}
                     </div>
-
-                    {/* Items */}
                     <div className="space-y-1.5 mb-4">
                       {order.items.map(item => (
                         <div key={item.id} className="flex items-center gap-2 text-sm">
@@ -337,8 +360,6 @@ export default function AdminPage() {
                         <span>{order.deliveryFee} DH</span>
                       </div>
                     </div>
-
-                    {/* Actions */}
                     {order.status !== 'delivered' && order.status !== 'cancelled' && (
                       <div className="flex gap-2">
                         {nextAction && (
