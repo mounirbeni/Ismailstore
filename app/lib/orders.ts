@@ -1,31 +1,41 @@
 import { Order } from '@/app/types/order';
 
-const KEY = 'dar_ismail_orders';
-
-export function getOrders(): Order[] {
-  if (typeof window === 'undefined') return [];
+export async function getOrders(): Promise<Order[]> {
   try {
-    return JSON.parse(localStorage.getItem(KEY) ?? '[]');
+    const res = await fetch('/api/orders', { cache: 'no-store' });
+    if (!res.ok) return [];
+    return res.json();
   } catch {
     return [];
   }
 }
 
-export function saveOrder(order: Order): void {
-  const orders = getOrders();
-  orders.unshift(order);
-  localStorage.setItem(KEY, JSON.stringify(orders));
-  window.dispatchEvent(new CustomEvent('ordersUpdated'));
+export async function getOrderByNumber(orderNumber: string): Promise<Order | null> {
+  try {
+    const res = await fetch(`/api/orders?number=${encodeURIComponent(orderNumber)}`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
 }
 
-export function updateOrderStatus(id: string, status: Order['status']): void {
-  const orders = getOrders();
-  const idx = orders.findIndex(o => o.id === id);
-  if (idx !== -1) {
-    orders[idx].status = status;
-    localStorage.setItem(KEY, JSON.stringify(orders));
-    window.dispatchEvent(new CustomEvent('ordersUpdated'));
-  }
+export async function saveOrder(order: Order): Promise<void> {
+  const res = await fetch('/api/orders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(order),
+  });
+  if (!res.ok) throw new Error('Failed to save order');
+}
+
+export async function updateOrderStatus(id: string, status: Order['status']): Promise<void> {
+  const res = await fetch(`/api/orders/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  });
+  if (!res.ok) throw new Error('Failed to update status');
 }
 
 export function generateOrderNumber(): string {

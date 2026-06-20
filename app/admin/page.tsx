@@ -25,6 +25,7 @@ function playNewOrderSound() {
   try {
     const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     const ctx = new AudioCtx();
+    // Classic phone ring: 440 Hz + 480 Hz mixed, two rings with a pause
     for (let ring = 0; ring < 3; ring++) {
       const t0 = ctx.currentTime + ring * 1.1;
       [440, 480].forEach(freq => {
@@ -91,8 +92,8 @@ export default function AdminPage() {
     }
   }, [authed]);
 
-  const loadOrders = useCallback(() => {
-    const fresh = getOrders();
+  const loadOrders = useCallback(async () => {
+    const fresh = await getOrders();
     setOrders(fresh);
     setLastRefresh(new Date());
 
@@ -127,11 +128,12 @@ export default function AdminPage() {
     }
   }
 
-  function handleStatusUpdate(id: string, status: OrderStatus) {
-    updateOrderStatus(id, status);
+  async function handleStatusUpdate(id: string, status: OrderStatus) {
+    await updateOrderStatus(id, status);
     loadOrders();
   }
 
+  // Stats
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayOrders = orders.filter(o => o.createdAt >= today.getTime());
@@ -141,6 +143,7 @@ export default function AdminPage() {
 
   const displayed = filter === 'all' ? orders : orders.filter(o => o.status === filter);
 
+  /* ─── Login screen ─── */
   if (!authed) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
@@ -176,8 +179,10 @@ export default function AdminPage() {
     );
   }
 
+  /* ─── Admin dashboard ─── */
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -238,6 +243,8 @@ export default function AdminPage() {
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+
+        {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100">
             <p className="text-3xl font-black text-orange-500">{activeCount}</p>
@@ -253,6 +260,7 @@ export default function AdminPage() {
           </div>
         </div>
 
+        {/* Filter tabs */}
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {(['all', 'new', 'preparing', 'on_the_way', 'delivered', 'cancelled'] as const).map(f => {
             const count = f === 'all' ? orders.length : orders.filter(o => o.status === f).length;
@@ -272,6 +280,7 @@ export default function AdminPage() {
           })}
         </div>
 
+        {/* Orders list */}
         {displayed.length === 0 ? (
           <div className="bg-white rounded-3xl p-12 text-center shadow-sm">
             <div className="text-5xl mb-4">📋</div>
@@ -294,10 +303,12 @@ export default function AdminPage() {
                 Actualisé à {lastRefresh.toLocaleTimeString('fr-MA')}
               </p>
             )}
+
             {displayed.map(order => {
               const nextAction = NEXT_STATUS[order.status];
               const cfg = STATUS_CONFIG[order.status];
               const isNew = order.status === 'new';
+
               return (
                 <div
                   key={order.id}
@@ -306,6 +317,7 @@ export default function AdminPage() {
                   }`}
                 >
                   <div className="p-5">
+                    {/* Order header */}
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
@@ -324,6 +336,8 @@ export default function AdminPage() {
                         <p className="text-xs text-gray-400">💵 Espèces</p>
                       </div>
                     </div>
+
+                    {/* Customer */}
                     <div className="bg-gray-50 rounded-xl p-3 mb-4 space-y-1.5">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-gray-900">{order.customer.name}</span>
@@ -343,6 +357,8 @@ export default function AdminPage() {
                         <p className="text-xs text-gray-500">📝 {order.customer.notes}</p>
                       )}
                     </div>
+
+                    {/* Items */}
                     <div className="space-y-1.5 mb-4">
                       {order.items.map(item => (
                         <div key={item.id} className="flex items-center gap-2 text-sm">
@@ -359,6 +375,8 @@ export default function AdminPage() {
                         <span>{order.deliveryFee} DH</span>
                       </div>
                     </div>
+
+                    {/* Actions */}
                     {order.status !== 'delivered' && order.status !== 'cancelled' && (
                       <div className="flex gap-2">
                         {nextAction && (

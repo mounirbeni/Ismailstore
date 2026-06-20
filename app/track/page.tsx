@@ -7,7 +7,7 @@ import {
   Search, Package, ChefHat, Bike, CheckCircle2,
   XCircle, Clock, MapPin, ArrowLeft,
 } from 'lucide-react';
-import { getOrders } from '@/app/lib/orders';
+import { getOrderByNumber } from '@/app/lib/orders';
 import { Order } from '@/app/types/order';
 
 const STEPS = [
@@ -29,20 +29,25 @@ function TrackContent() {
   const [order, setOrder] = useState<Order | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  function search(num?: string) {
+  async function search(num?: string) {
     const query = (num ?? input).trim().toUpperCase();
     if (!query) return;
-    const orders = getOrders();
-    const found = orders.find(o => o.orderNumber.toUpperCase() === query);
-    if (found) {
-      setOrder(found);
-      setNotFound(false);
-    } else {
-      setOrder(null);
-      setNotFound(true);
+    setLoading(true);
+    try {
+      const found = await getOrderByNumber(query);
+      if (found) {
+        setOrder(found);
+        setNotFound(false);
+      } else {
+        setOrder(null);
+        setNotFound(true);
+      }
+      setSearched(true);
+    } finally {
+      setLoading(false);
     }
-    setSearched(true);
   }
 
   useEffect(() => {
@@ -66,6 +71,7 @@ function TrackContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center gap-3">
           <Link
@@ -82,6 +88,7 @@ function TrackContent() {
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-6 space-y-5">
+        {/* Search box */}
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
           <label className="block text-sm font-semibold text-gray-700 mb-3">
             Numéro de commande
@@ -97,14 +104,16 @@ function TrackContent() {
             />
             <button
               onClick={() => search()}
-              className="px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-sm transition-colors flex items-center gap-2"
+              disabled={loading}
+              className="px-5 py-3 bg-amber-500 hover:bg-amber-600 disabled:bg-amber-300 text-white rounded-xl font-bold text-sm transition-colors flex items-center gap-2"
             >
               <Search className="w-4 h-4" />
-              Chercher
+              {loading ? '...' : 'Chercher'}
             </button>
           </div>
         </div>
 
+        {/* Not found */}
         {notFound && !order && (
           <div className="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100">
             <div className="text-4xl mb-3">🔍</div>
@@ -113,6 +122,7 @@ function TrackContent() {
           </div>
         )}
 
+        {/* Cancelled */}
         {order?.status === 'cancelled' && (
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-red-100">
             <div className="flex items-center gap-4">
@@ -128,9 +138,11 @@ function TrackContent() {
           </div>
         )}
 
+        {/* Active / delivered order */}
         {order && order.status !== 'cancelled' && (
           <>
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+              {/* Order number + live badge */}
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Commande</p>
@@ -148,6 +160,7 @@ function TrackContent() {
                 )}
               </div>
 
+              {/* Timeline */}
               <div>
                 {STEPS.map((step, idx) => {
                   const { Icon, label, desc } = step;
@@ -158,6 +171,7 @@ function TrackContent() {
 
                   return (
                     <div key={step.status} className="flex gap-4">
+                      {/* Dot + connector */}
                       <div className="flex flex-col items-center">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-500 ${
                           isDone   ? 'bg-green-500' :
@@ -171,6 +185,7 @@ function TrackContent() {
                         )}
                       </div>
 
+                      {/* Text */}
                       <div className={`pt-1.5 ${isLast ? 'pb-0' : 'pb-5'}`}>
                         <p className={`font-bold text-sm leading-none ${isPending ? 'text-gray-300' : 'text-gray-900'}`}>
                           {label}
@@ -194,6 +209,7 @@ function TrackContent() {
               )}
             </div>
 
+            {/* Order details */}
             <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
               <h3 className="font-bold text-gray-900 text-sm mb-4">Détails de la commande</h3>
 
@@ -235,6 +251,7 @@ function TrackContent() {
           </>
         )}
 
+        {/* Empty state */}
         {!searched && (
           <div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-gray-100">
             <div className="text-6xl mb-4">📦</div>

@@ -36,6 +36,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
   });
   const [errors, setErrors] = useState<Partial<CustomerInfo>>({});
   const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const deliveryFee = 15;
   const total = totalPrice + deliveryFee;
@@ -70,29 +71,35 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
     setStep(s => s - 1);
   }
 
-  function handleConfirmOrder() {
-    const order: Order = {
-      id: crypto.randomUUID(),
-      orderNumber: generateOrderNumber(),
-      items: state.items.map(i => ({
-        id: i.id,
-        name: i.name,
-        price: i.price,
-        quantity: i.quantity,
-        category: i.category,
-      })),
-      customer,
-      subtotal: totalPrice,
-      deliveryFee,
-      total,
-      status: 'new',
-      paymentMethod: 'cash',
-      createdAt: Date.now(),
-    };
-    saveOrder(order);
-    setPlacedOrder(order);
-    dispatch({ type: 'CLEAR_CART' });
-    setStep(4);
+  async function handleConfirmOrder() {
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const order: Order = {
+        id: crypto.randomUUID(),
+        orderNumber: generateOrderNumber(),
+        items: state.items.map(i => ({
+          id: i.id,
+          name: i.name,
+          price: i.price,
+          quantity: i.quantity,
+          category: i.category,
+        })),
+        customer,
+        subtotal: totalPrice,
+        deliveryFee,
+        total,
+        status: 'new',
+        paymentMethod: 'cash',
+        createdAt: Date.now(),
+      };
+      await saveOrder(order);
+      setPlacedOrder(order);
+      dispatch({ type: 'CLEAR_CART' });
+      setStep(4);
+    } catch {
+      setSubmitting(false);
+    }
   }
 
   function buildWhatsAppUrl(order: Order): string {
@@ -138,6 +145,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
       <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[95vh]">
 
+          {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
             <div className="flex items-center gap-3">
               {step > 1 && step < 4 && (
@@ -163,6 +171,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
             </button>
           </div>
 
+          {/* Progress bar */}
           {step <= 3 && (
             <div className="px-6 pt-4 pb-0 flex-shrink-0">
               <div className="flex items-center gap-2 mb-1">
@@ -179,8 +188,10 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
             </div>
           )}
 
+          {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto px-6 py-4">
 
+            {/* Step 1: Personal info */}
             {step === 1 && (
               <div className="space-y-5">
                 <div className="bg-amber-50 rounded-2xl p-4 flex items-center gap-3">
@@ -227,6 +238,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
               </div>
             )}
 
+            {/* Step 2: Address */}
             {step === 2 && (
               <div className="space-y-5">
                 <div>
@@ -279,8 +291,10 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
               </div>
             )}
 
+            {/* Step 3: Summary */}
             {step === 3 && (
               <div className="space-y-4">
+                {/* Delivery recap */}
                 <div className="bg-gray-50 rounded-2xl p-4 space-y-2">
                   <div className="flex items-center gap-2 text-sm">
                     <User className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -302,6 +316,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   )}
                 </div>
 
+                {/* Items */}
                 <div>
                   <h3 className="font-bold text-gray-900 text-sm mb-3">Votre commande</h3>
                   <div className="space-y-2">
@@ -320,6 +335,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   </div>
                 </div>
 
+                {/* Price breakdown */}
                 <div className="bg-gray-50 rounded-2xl p-4 space-y-2">
                   <div className="flex justify-between text-sm text-gray-600">
                     <span>Sous-total</span>
@@ -335,6 +351,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   </div>
                 </div>
 
+                {/* Payment method */}
                 <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-2xl p-4">
                   <Banknote className="w-6 h-6 text-green-600 flex-shrink-0" />
                   <div>
@@ -345,6 +362,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
               </div>
             )}
 
+            {/* Step 4: Success */}
             {step === 4 && placedOrder && (
               <div className="flex flex-col items-center text-center py-4 gap-5">
                 <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
@@ -406,6 +424,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
             )}
           </div>
 
+          {/* Footer CTA */}
           {step <= 3 && (
             <div className="px-6 py-4 border-t border-gray-100 flex-shrink-0">
               {step < 3 ? (
@@ -419,10 +438,15 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
               ) : (
                 <button
                   onClick={handleConfirmOrder}
-                  className="w-full py-4 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-green-200"
+                  disabled={submitting}
+                  className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-colors ${
+                    submitting
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-200'
+                  }`}
                 >
                   <CheckCircle className="w-5 h-5" />
-                  Confirmer la commande · {total} DH
+                  {submitting ? 'Enregistrement...' : `Confirmer la commande · ${total} DH`}
                 </button>
               )}
             </div>
