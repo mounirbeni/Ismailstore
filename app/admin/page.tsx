@@ -25,7 +25,6 @@ function playNewOrderSound() {
   try {
     const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     const ctx = new AudioCtx();
-    // Classic phone ring: 440 Hz + 480 Hz mixed, two rings with a pause
     for (let ring = 0; ring < 3; ring++) {
       const t0 = ctx.currentTime + ring * 1.1;
       [440, 480].forEach(freq => {
@@ -78,6 +77,13 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem('adminAuthed') === '1') {
+      setAuthed(true);
+    }
+  }, []);
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [filter, setFilter] = useState<OrderStatus | 'all'>('all');
@@ -121,6 +127,7 @@ export default function AdminPage() {
   function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     if (password === ADMIN_PASSWORD) {
+      localStorage.setItem('adminAuthed', '1');
       setAuthed(true);
       requestNotificationPermission();
     } else {
@@ -133,7 +140,6 @@ export default function AdminPage() {
     loadOrders();
   }
 
-  // Stats
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayOrders = orders.filter(o => o.createdAt >= today.getTime());
@@ -232,7 +238,7 @@ export default function AdminPage() {
               <RefreshCw className="w-4 h-4 text-gray-600" />
             </button>
             <button
-              onClick={() => setAuthed(false)}
+              onClick={() => { localStorage.removeItem('adminAuthed'); setAuthed(false); }}
               className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
               title="Déconnexion"
             >
