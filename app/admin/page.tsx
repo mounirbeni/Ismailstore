@@ -1,9 +1,30 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { getOrders, updateOrderStatus } from '@/app/lib/orders';
 import { Order, OrderStatus } from '@/app/types/order';
-import { LogOut, RefreshCw, Phone, MapPin, Clock } from 'lucide-react';
+import { LogOut, RefreshCw, Phone, MapPin, Clock, Bell, BellOff } from 'lucide-react';
+
+function playNewOrderSound() {
+  try {
+    const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    const notes = [523, 659, 784, 1047];
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const t = ctx.currentTime + i * 0.13;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.25, t + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+      osc.start(t);
+      osc.stop(t + 0.35);
+    });
+  } catch {}
+}
 
 const ADMIN_PASSWORD = 'darIsmail123';
 
@@ -40,14 +61,26 @@ export default function AdminPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [filter, setFilter] = useState<OrderStatus | 'all'>('all');
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const prevNewCountRef = useRef(0);
+  const isFirstLoadRef = useRef(true);
 
   const loadOrders = useCallback(() => {
-    setOrders(getOrders());
+    const fresh = getOrders();
+    setOrders(fresh);
     setLastRefresh(new Date());
-  }, []);
+
+    const currentNewCount = fresh.filter(o => o.status === 'new').length;
+    if (!isFirstLoadRef.current && currentNewCount > prevNewCountRef.current && soundEnabled) {
+      playNewOrderSound();
+    }
+    prevNewCountRef.current = currentNewCount;
+    isFirstLoadRef.current = false;
+  }, [soundEnabled]);
 
   useEffect(() => {
     if (!authed) return;
+    isFirstLoadRef.current = true;
     loadOrders();
     const interval = setInterval(loadOrders, 20000);
     window.addEventListener('ordersUpdated', loadOrders);
@@ -71,6 +104,7 @@ export default function AdminPage() {
     loadOrders();
   }
 
+  // Stats
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayOrders = orders.filter(o => o.createdAt >= today.getTime());
@@ -80,6 +114,7 @@ export default function AdminPage() {
 
   const displayed = filter === 'all' ? orders : orders.filter(o => o.status === filter);
 
+  /* ─── Login screen ─── */
   if (!authed) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
@@ -115,8 +150,10 @@ export default function AdminPage() {
     );
   }
 
+  /* ─── Admin dashboard ─── */
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -132,6 +169,18 @@ export default function AdminPage() {
             )}
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setSoundEnabled(s => !s)}
+              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+                soundEnabled ? 'bg-amber-100 hover:bg-amber-200' : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+              title={soundEnabled ? 'Désactiver le son' : 'Activer le son'}
+            >
+              {soundEnabled
+                ? <Bell className="w-4 h-4 text-amber-600" />
+                : <BellOff className="w-4 h-4 text-gray-400" />
+              }
+            </button>
             <button
               onClick={loadOrders}
               className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
@@ -151,6 +200,8 @@ export default function AdminPage() {
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+
+        {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100">
             <p className="text-3xl font-black text-orange-500">{activeCount}</p>
@@ -166,8 +217,10 @@ export default function AdminPage() {
           </div>
         </div>
 
+        {/* Filter tabs */}
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {(['all', 'new', 'preparing', 'on_the_way', 'delivered', 'cancelled'] as const).map(f => {
+            const label = f === 'all' ? `Toutes (${orders.length})` : STATUS_CONFIG[f].label;
             const count = f === 'all' ? orders.length : orders.filter(o => o.status === f).length;
             return (
               <button
@@ -185,6 +238,7 @@ export default function AdminPage() {
           })}
         </div>
 
+        {/* Orders list */}
         {displayed.length === 0 ? (
           <div className="bg-white rounded-3xl p-12 text-center shadow-sm">
             <div className="text-5xl mb-4">📋</div>
@@ -192,7 +246,7 @@ export default function AdminPage() {
             <p className="text-gray-400 text-sm mt-1">
               {filter === 'all'
                 ? 'Les nouvelles commandes apparaîtront ici automatiquement'
-                : 'Aucune commande avec le statut sélectionné'}
+                : `Aucune commande avec le statut sélectionné`}
             </p>
             {lastRefresh && (
               <p className="text-gray-300 text-xs mt-4">
@@ -221,6 +275,7 @@ export default function AdminPage() {
                   }`}
                 >
                   <div className="p-5">
+                    {/* Order header */}
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
@@ -240,6 +295,7 @@ export default function AdminPage() {
                       </div>
                     </div>
 
+                    {/* Customer */}
                     <div className="bg-gray-50 rounded-xl p-3 mb-4 space-y-1.5">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-gray-900">{order.customer.name}</span>
@@ -260,6 +316,7 @@ export default function AdminPage() {
                       )}
                     </div>
 
+                    {/* Items */}
                     <div className="space-y-1.5 mb-4">
                       {order.items.map(item => (
                         <div key={item.id} className="flex items-center gap-2 text-sm">
@@ -277,6 +334,7 @@ export default function AdminPage() {
                       </div>
                     </div>
 
+                    {/* Actions */}
                     {order.status !== 'delivered' && order.status !== 'cancelled' && (
                       <div className="flex gap-2">
                         {nextAction && (

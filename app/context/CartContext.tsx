@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useReducer, ReactNode } from 'react';
+import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { MenuItem } from '@/app/data/menu';
 
 export interface CartItem extends MenuItem {
@@ -21,6 +21,18 @@ type CartAction =
   | { type: 'TOGGLE_CART' }
   | { type: 'SET_CART_OPEN'; payload: boolean }
   | { type: 'SET_CHECKOUT_OPEN'; payload: boolean };
+
+const CART_KEY = 'dar_ismail_cart';
+
+function getInitialState(): CartState {
+  const base: CartState = { items: [], isOpen: false, isCheckoutOpen: false };
+  if (typeof window === 'undefined') return base;
+  try {
+    const saved = localStorage.getItem(CART_KEY);
+    if (saved) return { ...base, items: JSON.parse(saved) };
+  } catch {}
+  return base;
+}
 
 function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
@@ -69,11 +81,11 @@ const CartContext = createContext<{
 } | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, {
-    items: [],
-    isOpen: false,
-    isCheckoutOpen: false,
-  });
+  const [state, dispatch] = useReducer(cartReducer, undefined, getInitialState);
+
+  useEffect(() => {
+    localStorage.setItem(CART_KEY, JSON.stringify(state.items));
+  }, [state.items]);
 
   const totalItems = state.items.reduce((sum, i) => sum + i.quantity, 0);
   const totalPrice = state.items.reduce((sum, i) => sum + i.price * i.quantity, 0);

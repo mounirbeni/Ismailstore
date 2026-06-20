@@ -1,13 +1,17 @@
 'use client';
 
-import { X, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
+import { X, Minus, Plus, ShoppingBag, Trash2, AlertCircle } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
+
+const MIN_ORDER = 50;
 
 export default function CartDrawer() {
   const { state, dispatch, totalItems, totalPrice } = useCart();
 
   const deliveryFee = 15;
   const total = totalPrice + deliveryFee;
+  const canCheckout = totalPrice >= MIN_ORDER;
+  const remaining = MIN_ORDER - totalPrice;
 
   function openCheckout() {
     dispatch({ type: 'SET_CART_OPEN', payload: false });
@@ -24,6 +28,7 @@ export default function CartDrawer() {
       />
 
       <div className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white z-50 shadow-2xl flex flex-col">
+        {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-gray-100">
           <div className="flex items-center gap-3">
             <ShoppingBag className="w-5 h-5 text-amber-500" />
@@ -42,6 +47,7 @@ export default function CartDrawer() {
           </button>
         </div>
 
+        {/* Restaurant info */}
         <div className="px-5 py-3 bg-amber-50 border-b border-amber-100 flex items-center gap-3">
           <span className="text-2xl">🫕</span>
           <div>
@@ -50,6 +56,7 @@ export default function CartDrawer() {
           </div>
         </div>
 
+        {/* Items */}
         <div className="flex-1 overflow-y-auto">
           {state.items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8">
@@ -106,8 +113,20 @@ export default function CartDrawer() {
           )}
         </div>
 
+        {/* Summary & Checkout */}
         {state.items.length > 0 && (
           <div className="p-5 border-t border-gray-100 space-y-4">
+            {/* Minimum order warning */}
+            {!canCheckout && (
+              <div className="flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-xl px-4 py-3">
+                <AlertCircle className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                <p className="text-orange-700 text-xs font-medium">
+                  Minimum 50 DH — ajoutez encore{' '}
+                  <span className="font-bold">{remaining} DH</span> pour commander
+                </p>
+              </div>
+            )}
+
             <div className="space-y-2">
               <div className="flex justify-between text-sm text-gray-500">
                 <span>Sous-total</span>
@@ -125,9 +144,14 @@ export default function CartDrawer() {
 
             <button
               onClick={openCheckout}
-              className="w-full py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-bold text-base transition-all shadow-lg shadow-amber-200 active:scale-95"
+              disabled={!canCheckout}
+              className={`w-full py-4 rounded-2xl font-bold text-base transition-all active:scale-95 ${
+                canCheckout
+                  ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-200'
+                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }`}
             >
-              Commander · {total} DH
+              {canCheckout ? `Commander · ${total} DH` : `Minimum 50 DH requis`}
             </button>
             <p className="text-center text-xs text-gray-400">💵 Paiement en espèces à la livraison</p>
           </div>
