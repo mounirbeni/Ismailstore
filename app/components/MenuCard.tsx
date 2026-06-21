@@ -47,18 +47,6 @@ export default function MenuCard({ item }: Props) {
       className="flex items-center gap-3 py-4 border-b border-gray-100 cursor-pointer active:bg-gray-50 transition-colors"
       onClick={openDetail}
     >
-      {/* Text side */}
-      <div className="flex-1 min-w-0 pr-1">
-        {badge && (
-          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold mb-1.5 ${badge.className}`}>
-            {badge.label}
-          </span>
-        )}
-        <h3 className="font-bold text-gray-900 text-sm leading-snug">{item.name}</h3>
-        <p className="text-gray-400 text-xs mt-1 line-clamp-2 leading-relaxed">{item.description}</p>
-        <p className="text-amber-600 font-black text-base mt-2">{item.price} DH</p>
-      </div>
-
       {/* Image + qty control */}
       <div className="relative flex-shrink-0">
         <div className={`w-[90px] h-[90px] rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm`}>
@@ -95,6 +83,18 @@ export default function MenuCard({ item }: Props) {
             </button>
           </div>
         )}
+      </div>
+
+      {/* Text side */}
+      <div className="flex-1 min-w-0 pl-1">
+        {badge && (
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold mb-1.5 ${badge.className}`}>
+            {badge.label}
+          </span>
+        )}
+        <h3 className="font-bold text-gray-900 text-sm leading-snug">{item.name}</h3>
+        <p className="text-gray-400 text-xs mt-1 line-clamp-2 leading-relaxed">{item.description}</p>
+        <p className="text-amber-600 font-black text-base mt-2">{item.price} DH</p>
       </div>
     </div>
   );
