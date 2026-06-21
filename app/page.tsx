@@ -30,7 +30,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen">
       <RestaurantHero />
       <CategoryTabs active={activeCategory} onSelect={setActiveCategory} categories={categories} />
       <MenuSection activeCategory={activeCategory} menuItems={menuItems} />

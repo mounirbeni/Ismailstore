@@ -1,26 +1,43 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import {
   X, ChevronRight, ChevronLeft, MapPin, User, Phone,
-  CheckCircle, Clock, MessageCircle, Banknote,
+  CheckCircle, Clock, MessageCircle, Banknote, Package,
 } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
 import { saveOrder, generateOrderNumber } from '@/app/lib/orders';
 import { Order, CustomerInfo } from '@/app/types/order';
 
-const NEIGHBORHOODS = [
-  'Médina', 'Guéliz', 'Hivernage', 'Majorelle', "M'Hamid",
-  'Massira', 'Daoudiate', 'Amerchich', 'Targa', 'Bab Doukkala',
-  'Mellah', 'Hay Mohammadi', 'Sidi Ghanem', 'Palmeraie',
-  'Annakhil', 'Route de Fès', "Route d'Ourika", 'Route de Casablanca',
+const NEAR_NEIGHBORHOODS = new Set([
+  'Massira 1', 'Massira 2', 'Massira 3', 'Massira 4',
+  'Hay Salam', 'Amerchich', "M'Hamid", 'Sidi Youssef Ben Ali',
+  'Hay Mohammadi', 'Assif',
+]);
+
+const FAR_NEIGHBORHOODS = [
+  'Médina', 'Guéliz', 'Hivernage', 'Majorelle', 'Bab Doukkala',
+  'Mellah', 'Daoudiate', 'Targa', 'Annakhil', 'Palmeraie',
+  'Sidi Ghanem', 'Route de Fès', "Route d'Ourika", 'Route de Casablanca',
 ];
 
-const RESTAURANT_PHONE = '212600000000'; // Update with real number
+const RESTAURANT_PHONE = '212600000000';
 
 const categoryEmojis: Record<string, string> = {
   tajins: '🫕', salads: '🥗', briwat: '🥟', couscous: '🍲',
 };
+
+function getDeliveryMinutes(neighborhood: string): number {
+  return NEAR_NEIGHBORHOODS.has(neighborhood) ? 30 : 60;
+}
+
+function getArrivalTime(minutes: number): string {
+  return new Date(Date.now() + minutes * 60000).toLocaleTimeString('fr-MA', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
 
 interface Props {
   isOpen: boolean;
@@ -35,9 +52,11 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
   });
   const [errors, setErrors] = useState<Partial<CustomerInfo>>({});
   const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const deliveryFee = 15;
   const total = totalPrice + deliveryFee;
+  const deliveryMinutes = customer.neighborhood ? getDeliveryMinutes(customer.neighborhood) : null;
 
   function validateStep1() {
     const e: Partial<CustomerInfo> = {};
@@ -69,32 +88,39 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
     setStep(s => s - 1);
   }
 
-  function handleConfirmOrder() {
-    const order: Order = {
-      id: crypto.randomUUID(),
-      orderNumber: generateOrderNumber(),
-      items: state.items.map(i => ({
-        id: i.id,
-        name: i.name,
-        price: i.price,
-        quantity: i.quantity,
-        category: i.category,
-      })),
-      customer,
-      subtotal: totalPrice,
-      deliveryFee,
-      total,
-      status: 'new',
-      paymentMethod: 'cash',
-      createdAt: Date.now(),
-    };
-    saveOrder(order);
-    setPlacedOrder(order);
-    dispatch({ type: 'CLEAR_CART' });
-    setStep(4);
+  async function handleConfirmOrder() {
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const order: Order = {
+        id: crypto.randomUUID(),
+        orderNumber: generateOrderNumber(),
+        items: state.items.map(i => ({
+          id: i.id,
+          name: i.name,
+          price: i.price,
+          quantity: i.quantity,
+          category: i.category,
+        })),
+        customer,
+        subtotal: totalPrice,
+        deliveryFee,
+        total,
+        status: 'new',
+        paymentMethod: 'cash',
+        createdAt: Date.now(),
+      };
+      await saveOrder(order);
+      setPlacedOrder(order);
+      dispatch({ type: 'CLEAR_CART' });
+      setStep(4);
+    } catch {
+      setSubmitting(false);
+    }
   }
 
   function buildWhatsAppUrl(order: Order): string {
+    const minutes = getDeliveryMinutes(order.customer.neighborhood);
     const items = order.items
       .map(i => `  • ${i.name} ×${i.quantity} — ${i.price * i.quantity} DH`)
       .join('\n');
@@ -113,6 +139,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
       '',
       `📦 Livraison: ${order.deliveryFee} DH`,
       `💰 *Total: ${order.total} DH*`,
+      `⏱️ Délai estimé: ${minutes} min`,
       '💵 Paiement à la livraison',
     ].filter(Boolean).join('\n');
     return `https://wa.me/${RESTAURANT_PHONE}?text=${encodeURIComponent(msg)}`;
@@ -134,11 +161,16 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
         className="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm"
         onClick={step === 4 ? handleClose : undefined}
       />
-      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[95vh]">
+      <div className="fixed inset-0 z-50 flex items-end justify-center">
+        <div className="bg-white w-full max-w-[430px] rounded-t-3xl shadow-2xl flex flex-col max-h-[95vh]">
+
+          {/* Handle bar */}
+          <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
+            <div className="w-10 h-1 bg-gray-200 rounded-full" />
+          </div>
 
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+          <div className="flex items-center justify-between px-6 py-3 border-b border-gray-100 flex-shrink-0">
             <div className="flex items-center gap-3">
               {step > 1 && step < 4 && (
                 <button
@@ -190,7 +222,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   <span className="text-2xl">🛵</span>
                   <div>
                     <p className="font-semibold text-gray-900 text-sm">Livraison à Marrakech uniquement</p>
-                    <p className="text-gray-500 text-xs">30–45 min · Paiement en espèces à la livraison</p>
+                    <p className="text-gray-500 text-xs">30–60 min · Paiement en espèces à la livraison</p>
                   </div>
                 </div>
 
@@ -246,11 +278,34 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                     }`}
                   >
                     <option value="">Choisir un quartier...</option>
-                    {NEIGHBORHOODS.map(n => (
-                      <option key={n} value={n}>{n}</option>
-                    ))}
+                    <optgroup label="⚡ Proche — ~30 min">
+                      {Array.from(NEAR_NEIGHBORHOODS).map(n => (
+                        <option key={n} value={n}>{n}</option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="🛵 Plus loin — ~60 min">
+                      {FAR_NEIGHBORHOODS.map(n => (
+                        <option key={n} value={n}>{n}</option>
+                      ))}
+                    </optgroup>
                   </select>
                   {errors.neighborhood && <p className="text-red-500 text-xs mt-1">{errors.neighborhood}</p>}
+
+                  {/* Delivery time badge */}
+                  {deliveryMinutes !== null && (
+                    <div className={`mt-3 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium ${
+                      deliveryMinutes === 30
+                        ? 'bg-green-50 border border-green-200 text-green-700'
+                        : 'bg-orange-50 border border-orange-200 text-orange-700'
+                    }`}>
+                      <Clock className="w-4 h-4 flex-shrink-0" />
+                      <span>
+                        Livraison estimée :{' '}
+                        <strong>{deliveryMinutes === 30 ? '~30 minutes' : '~1 heure'}</strong>
+                        {' '}· vers <strong>{getArrivalTime(deliveryMinutes)}</strong>
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -286,6 +341,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
             {/* Step 3: Summary */}
             {step === 3 && (
               <div className="space-y-4">
+                {/* Delivery recap */}
                 <div className="bg-gray-50 rounded-2xl p-4 space-y-2">
                   <div className="flex items-center gap-2 text-sm">
                     <User className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -305,8 +361,19 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                       <span>{customer.notes}</span>
                     </div>
                   )}
+                  {deliveryMinutes !== null && (
+                    <div className="flex items-center gap-2 text-sm pt-1 border-t border-gray-200 mt-1">
+                      <Clock className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                      <span className="text-gray-700">
+                        Livraison estimée :{' '}
+                        <strong>{deliveryMinutes === 30 ? '~30 min' : '~1 heure'}</strong>
+                        {' '}· vers <strong>{getArrivalTime(deliveryMinutes)}</strong>
+                      </span>
+                    </div>
+                  )}
                 </div>
 
+                {/* Items */}
                 <div>
                   <h3 className="font-bold text-gray-900 text-sm mb-3">Votre commande</h3>
                   <div className="space-y-2">
@@ -325,6 +392,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   </div>
                 </div>
 
+                {/* Price breakdown */}
                 <div className="bg-gray-50 rounded-2xl p-4 space-y-2">
                   <div className="flex justify-between text-sm text-gray-600">
                     <span>Sous-total</span>
@@ -340,6 +408,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   </div>
                 </div>
 
+                {/* Payment method */}
                 <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-2xl p-4">
                   <Banknote className="w-6 h-6 text-green-600 flex-shrink-0" />
                   <div>
@@ -351,56 +420,71 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
             )}
 
             {/* Step 4: Success */}
-            {step === 4 && placedOrder && (
-              <div className="flex flex-col items-center text-center py-4 gap-5">
-                <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
-                  <CheckCircle className="w-11 h-11 text-green-500" />
+            {step === 4 && placedOrder && (() => {
+              const mins = getDeliveryMinutes(placedOrder.customer.neighborhood);
+              const arrival = getArrivalTime(mins);
+              return (
+                <div className="flex flex-col items-center text-center py-4 gap-5">
+                  <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
+                    <CheckCircle className="w-11 h-11 text-green-500" />
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">
+                      Merci {customer.name.split(' ')[0]} !
+                    </h3>
+                    <p className="text-gray-500 text-sm mt-1">Votre commande est confirmée</p>
+                  </div>
+
+                  <div className="bg-amber-50 border border-amber-200 rounded-2xl px-6 py-4 w-full">
+                    <p className="text-xs text-amber-600 uppercase tracking-wider font-semibold">N° de commande</p>
+                    <p className="text-3xl font-black text-amber-700 mt-1">{placedOrder.orderNumber}</p>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-gray-700 bg-gray-50 rounded-2xl px-5 py-3 w-full">
+                    <Clock className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                    <span className="text-sm">
+                      Livraison estimée :{' '}
+                      <strong>{mins === 30 ? '~30 minutes' : '~1 heure'}</strong>
+                      {' '}· vers <strong>{arrival}</strong>
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-gray-600 bg-green-50 rounded-2xl px-5 py-3 w-full">
+                    <Banknote className="w-4 h-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">
+                      Préparez <strong>{placedOrder.total} DH</strong> à la livraison
+                    </span>
+                  </div>
+
+                  <Link
+                    href={`/track?order=${placedOrder.orderNumber}`}
+                    onClick={handleClose}
+                    className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-6 py-3.5 rounded-2xl font-bold text-sm transition-colors w-full justify-center"
+                  >
+                    <Package className="w-5 h-5" />
+                    Suivre ma commande
+                  </Link>
+
+                  <a
+                    href={buildWhatsAppUrl(placedOrder)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3.5 rounded-2xl font-semibold text-sm transition-colors w-full justify-center"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    Notifier via WhatsApp
+                  </a>
+
+                  <button
+                    onClick={handleClose}
+                    className="text-gray-400 font-semibold text-sm hover:text-gray-600 transition-colors"
+                  >
+                    ← Retourner au menu
+                  </button>
                 </div>
-
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900">
-                    Merci {customer.name.split(' ')[0]} !
-                  </h3>
-                  <p className="text-gray-500 text-sm mt-1">Votre commande est confirmée</p>
-                </div>
-
-                <div className="bg-amber-50 border border-amber-200 rounded-2xl px-6 py-4 w-full">
-                  <p className="text-xs text-amber-600 uppercase tracking-wider font-semibold">N° de commande</p>
-                  <p className="text-3xl font-black text-amber-700 mt-1">{placedOrder.orderNumber}</p>
-                </div>
-
-                <div className="flex items-center gap-2 text-gray-600 bg-gray-50 rounded-2xl px-5 py-3 w-full">
-                  <Clock className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                  <span className="text-sm">
-                    Livraison estimée: <strong>30–45 minutes</strong>
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2 text-gray-600 bg-green-50 rounded-2xl px-5 py-3 w-full">
-                  <Banknote className="w-4 h-4 text-green-500 flex-shrink-0" />
-                  <span className="text-sm">
-                    Préparez <strong>{placedOrder.total} DH</strong> à la livraison
-                  </span>
-                </div>
-
-                <a
-                  href={buildWhatsAppUrl(placedOrder)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3.5 rounded-2xl font-semibold text-sm transition-colors w-full justify-center"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  Suivre via WhatsApp
-                </a>
-
-                <button
-                  onClick={handleClose}
-                  className="text-amber-600 font-semibold text-sm hover:text-amber-700 transition-colors"
-                >
-                  ← Retourner au menu
-                </button>
-              </div>
-            )}
+              );
+            })()}
           </div>
 
           {/* Footer CTA */}
@@ -417,10 +501,15 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
               ) : (
                 <button
                   onClick={handleConfirmOrder}
-                  className="w-full py-4 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-green-200"
+                  disabled={submitting}
+                  className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-colors ${
+                    submitting
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-200'
+                  }`}
                 >
                   <CheckCircle className="w-5 h-5" />
-                  Confirmer la commande · {total} DH
+                  {submitting ? 'Enregistrement...' : `Confirmer la commande · ${total} DH`}
                 </button>
               )}
             </div>
