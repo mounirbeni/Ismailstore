@@ -7,6 +7,7 @@ import MenuSection from '@/app/components/MenuSection';
 import CartButton from '@/app/components/CartButton';
 import CartDrawer from '@/app/components/CartDrawer';
 import CheckoutModal from '@/app/components/CheckoutModal';
+import ProductModal from '@/app/components/ProductModal';
 import { useCart } from '@/app/context/CartContext';
 import { MenuItem, Category, menuItems as staticItems, categories as staticCats } from '@/app/data/menu';
 
@@ -30,12 +31,13 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-white">
       <RestaurantHero />
       <CategoryTabs active={activeCategory} onSelect={setActiveCategory} categories={categories} />
       <MenuSection activeCategory={activeCategory} menuItems={menuItems} />
       <CartButton />
       <CartDrawer />
+      <ProductModal />
       <CheckoutModal
         isOpen={state.isCheckoutOpen}
         onClose={() => dispatch({ type: 'SET_CHECKOUT_OPEN', payload: false })}

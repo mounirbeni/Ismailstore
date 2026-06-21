@@ -64,6 +64,12 @@ export function calcDeliveryInfo(neighborhood: string): DeliveryInfo {
   };
 }
 
+export function calcDeliveryFee(neighborhood: string): number {
+  const data = NEIGHBORHOOD_COORDS[neighborhood];
+  if (!data) return 15;
+  return data.group === 'near' ? 15 : 20;
+}
+
 export function getArrivalTime(minutes: number): string {
   return new Date(Date.now() + minutes * 60000).toLocaleTimeString('fr-MA', {
     hour: '2-digit',

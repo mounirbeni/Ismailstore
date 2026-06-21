@@ -11,6 +11,7 @@ interface CartState {
   items: CartItem[];
   isOpen: boolean;
   isCheckoutOpen: boolean;
+  selectedProduct: MenuItem | null;
 }
 
 type CartAction =
@@ -20,12 +21,13 @@ type CartAction =
   | { type: 'CLEAR_CART' }
   | { type: 'TOGGLE_CART' }
   | { type: 'SET_CART_OPEN'; payload: boolean }
-  | { type: 'SET_CHECKOUT_OPEN'; payload: boolean };
+  | { type: 'SET_CHECKOUT_OPEN'; payload: boolean }
+  | { type: 'SET_SELECTED_PRODUCT'; payload: MenuItem | null };
 
 const CART_KEY = 'dar_ismail_cart';
 
 function getInitialState(): CartState {
-  const base: CartState = { items: [], isOpen: false, isCheckoutOpen: false };
+  const base: CartState = { items: [], isOpen: false, isCheckoutOpen: false, selectedProduct: null };
   if (typeof window === 'undefined') return base;
   try {
     const saved = localStorage.getItem(CART_KEY);
@@ -58,6 +60,8 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       return { ...state, isOpen: action.payload };
     case 'SET_CHECKOUT_OPEN':
       return { ...state, isCheckoutOpen: action.payload };
+    case 'SET_SELECTED_PRODUCT':
+      return { ...state, selectedProduct: action.payload };
     default:
       return state;
   }

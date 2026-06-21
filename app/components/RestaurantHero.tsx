@@ -1,6 +1,6 @@
 'use client';
 
-import { Clock, Star, MapPin, ChevronRight, Heart, Package } from 'lucide-react';
+import { Clock, Star, MapPin, Heart, Package, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
 
@@ -8,50 +8,96 @@ export default function RestaurantHero() {
   const [liked, setLiked] = useState(false);
 
   return (
-    <div className="relative">
+    <div className="relative bg-white">
+      {/* Banner */}
       <div
-        className="w-full h-56 md:h-72 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #8B4513 0%, #D2691E 30%, #CD853F 60%, #DAA520 100%)' }}
+        className="w-full h-48 relative overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, #78350f 0%, #b45309 40%, #d97706 70%, #f59e0b 100%)',
+        }}
       >
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }}
+        <div
+          className="absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M0 20 L10 0 L20 20 L10 40Z' fill='white'/%3E%3Cpath d='M20 20 L30 0 L40 20 L30 40Z' fill='white'/%3E%3C/svg%3E")`,
+            backgroundSize: '40px 40px',
+          }}
         />
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-8xl mb-4 opacity-30">🫕</div>
+          <span className="text-[100px] opacity-20 select-none">🫕</span>
         </div>
-        <div className="absolute top-4 left-4 flex items-center gap-1 text-white/80 text-sm">
-          <span>Home</span><ChevronRight className="w-4 h-4" /><span>Restaurants</span><ChevronRight className="w-4 h-4" /><span className="text-white font-medium">Dar Ismail</span>
+
+        {/* Top nav */}
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-4">
+          <div className="flex items-center gap-1 text-white/80 text-xs">
+            <span>Accueil</span>
+            <ChevronRight className="w-3 h-3" />
+            <span className="text-white font-semibold">Dar Ismail</span>
+          </div>
+          <button
+            onClick={() => setLiked(!liked)}
+            className="w-9 h-9 rounded-full bg-black/25 backdrop-blur-sm flex items-center justify-center"
+          >
+            <Heart className={`w-5 h-5 transition-colors ${liked ? 'text-red-400 fill-red-400' : 'text-white'}`} />
+          </button>
         </div>
-        <button onClick={() => setLiked(!liked)} className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-white/30">
-          <Heart className={`w-5 h-5 transition-colors ${liked ? 'text-red-400 fill-red-400' : 'text-white'}`} />
-        </button>
       </div>
-      <div className="bg-white mx-4 -mt-8 rounded-2xl shadow-xl p-5 relative z-10">
-        <div className="flex items-start gap-4">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-4xl shadow-lg flex-shrink-0 -mt-10 border-4 border-white">🫕</div>
+
+      {/* Info card */}
+      <div className="mx-4 -mt-6 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 relative z-10">
+        <div className="flex items-start gap-3">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-3xl shadow-lg flex-shrink-0 border-4 border-white -mt-8">
+            🫕
+          </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-bold text-gray-900">Dar Ismail</h1>
-            <p className="text-gray-500 text-sm mt-0.5">Authentic Moroccan Cuisine · Marrakech</p>
-            <div className="flex items-center gap-4 mt-3 flex-wrap">
-              <div className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-400 fill-yellow-400" /><span className="font-semibold text-gray-800 text-sm">4.8</span><span className="text-gray-400 text-xs">(312 reviews)</span></div>
-              <div className="flex items-center gap-1 text-gray-500 text-sm"><Clock className="w-4 h-4 text-green-500" /><span>25–40 min</span></div>
-              <div className="flex items-center gap-1 text-gray-500 text-sm"><MapPin className="w-4 h-4 text-blue-500" /><span>1.2 km</span></div>
+            <h1 className="text-xl font-black text-gray-900 leading-tight">Dar Ismail</h1>
+            <p className="text-gray-500 text-xs mt-0.5">Cuisine marocaine authentique · Marrakech</p>
+            <div className="flex items-center gap-3 mt-2 flex-wrap">
+              <div className="flex items-center gap-1">
+                <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                <span className="font-bold text-gray-800 text-xs">4.8</span>
+                <span className="text-gray-400 text-xs">(312)</span>
+              </div>
+              <div className="flex items-center gap-1 text-gray-500 text-xs">
+                <Clock className="w-3.5 h-3.5 text-green-500" />
+                <span>25–45 min</span>
+              </div>
+              <div className="flex items-center gap-1 text-gray-500 text-xs">
+                <MapPin className="w-3.5 h-3.5 text-blue-500" />
+                <span>Marrakech</span>
+              </div>
             </div>
           </div>
         </div>
-        <div className="flex gap-2 mt-4 flex-wrap">
-          {['Moroccan', 'Tagine', 'Couscous', 'Traditional', 'Halal'].map(tag => (
-            <span key={tag} className="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-medium border border-amber-200">{tag}</span>
+
+        {/* Tags */}
+        <div className="flex gap-1.5 mt-3 flex-wrap">
+          {['Tajine', 'Couscous', 'Briwat', 'Halal', 'Traditionnel'].map(tag => (
+            <span key={tag} className="px-2.5 py-0.5 bg-amber-50 text-amber-700 rounded-full text-xs font-medium border border-amber-100">
+              {tag}
+            </span>
           ))}
         </div>
-        <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2 text-gray-500">
-            <span className="text-green-500 font-semibold">Livraison gratuite</span><span>·</span><span>Min. 50 DH</span>
+
+        {/* Delivery info */}
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100 text-xs">
+          <div className="flex items-center gap-3 text-gray-500">
+            <span className="text-green-600 font-semibold">Livraison 15–20 DH</span>
+            <span>·</span>
+            <span>Min. 50 DH</span>
           </div>
-          <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" /><span className="text-green-600 font-medium text-xs">Ouvert</span></div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-green-600 font-semibold">Ouvert</span>
+          </div>
         </div>
-        <Link href="/track" className="mt-3 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-amber-200 bg-amber-50 text-amber-700 text-sm font-semibold hover:bg-amber-100 transition-colors">
-          <Package className="w-4 h-4" />Suivre ma commande
+
+        <Link
+          href="/track"
+          className="mt-3 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-amber-200 bg-amber-50 text-amber-700 text-xs font-bold hover:bg-amber-100 transition-colors"
+        >
+          <Package className="w-3.5 h-3.5" />
+          Suivre ma commande
         </Link>
       </div>
     </div>
