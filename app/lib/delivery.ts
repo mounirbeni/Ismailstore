@@ -1,5 +1,4 @@
-// Dar Ismail — Massira 3, Marrakech
-const RESTAURANT = { lat: 31.6068, lng: -8.0365 };
+const RESTAURANT = { lat: 31.6461, lng: -8.0714 };
 
 // Approximate center coordinates for each Marrakech neighborhood
 const NEIGHBORHOOD_COORDS: Record<string, { lat: number; lng: number; group: 'near' | 'far' }> = {
