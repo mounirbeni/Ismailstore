@@ -38,27 +38,26 @@ export default function RestaurantHero() {
     <div className="relative bg-white">
       {/* ── Banner ──────────────────────────────────────────────────────── */}
       <div
-        className="w-full h-56 relative overflow-hidden"
+        className="w-full h-52 relative overflow-hidden"
         style={{ background: 'linear-gradient(150deg, #431407 0%, #7c2d12 25%, #b45309 60%, #f59e0b 100%)' }}
       >
         {/* Moroccan hexagon pattern */}
         <div
-          className="absolute inset-0 opacity-[0.06]"
+          className="absolute inset-0 opacity-[0.07]"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpolygon points='30,3 54,16 54,44 30,57 6,44 6,16' fill='none' stroke='white' stroke-width='1.5'/%3E%3Ccircle cx='30' cy='30' r='7' fill='none' stroke='white' stroke-width='1'/%3E%3C/svg%3E")`,
             backgroundSize: '60px 60px',
           }}
         />
 
-        {/* Decorative floating emojis */}
-        <span className="absolute top-8 left-5 text-5xl opacity-[0.14] rotate-[-15deg] select-none pointer-events-none">🫕</span>
-        <span className="absolute bottom-10 right-5 text-4xl opacity-[0.14] rotate-[12deg] select-none pointer-events-none">🥘</span>
-        <span className="absolute top-5 right-14 text-3xl opacity-[0.10] select-none pointer-events-none">🌿</span>
-        <span className="absolute bottom-6 left-14 text-2xl opacity-[0.10] select-none pointer-events-none">✨</span>
-        <span className="absolute inset-0 flex items-center justify-center text-[130px] opacity-[0.07] select-none pointer-events-none">🫕</span>
+        {/* Decorative emojis */}
+        <span className="absolute top-8 left-5 text-5xl opacity-[0.15] rotate-[-15deg] select-none pointer-events-none">🫕</span>
+        <span className="absolute top-6 right-5 text-4xl opacity-[0.12] rotate-[12deg] select-none pointer-events-none">🥘</span>
+        <span className="absolute bottom-10 right-16 text-3xl opacity-[0.10] select-none pointer-events-none">🌿</span>
+        <span className="absolute inset-0 flex items-center justify-center text-[120px] opacity-[0.07] select-none pointer-events-none">🫕</span>
 
         {/* Bottom scrim */}
-        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/30 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/25 to-transparent" />
 
         {/* Top nav */}
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-4">
@@ -75,20 +74,9 @@ export default function RestaurantHero() {
           </button>
         </div>
 
-        {/* Banner badges */}
-        <div className="absolute bottom-3 left-4 flex items-center gap-2">
-          {open ? (
-            <span className="flex items-center gap-1.5 bg-green-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg shadow-green-900/30">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              Ouvert maintenant
-            </span>
-          ) : (
-            <span className="flex items-center gap-1.5 bg-red-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
-              <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
-              Fermé · Ouvre à 10h30
-            </span>
-          )}
-          <span className="flex items-center gap-1 bg-amber-500/85 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full">
+        {/* "Livraison rapide" badge — top area, well above card overlap */}
+        <div className="absolute top-14 left-4">
+          <span className="flex items-center gap-1 bg-amber-500/80 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full">
             <Zap className="w-3 h-3" />
             Livraison rapide
           </span>
@@ -110,7 +98,7 @@ export default function RestaurantHero() {
           </div>
 
           <div className="flex-1 min-w-0 pt-0.5">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl font-black text-gray-900 leading-tight">Dar Ismail</h1>
               <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-black rounded-full uppercase tracking-wide">Halal</span>
             </div>
@@ -135,7 +123,18 @@ export default function RestaurantHero() {
           </div>
         </div>
 
-        <div className="h-px bg-gray-100 mt-3.5 mb-3" />
+        {/* Open / closed status bar */}
+        <div className={`mt-3 flex items-center justify-between rounded-xl px-3 py-2 ${open ? 'bg-green-50 border border-green-100' : 'bg-red-50 border border-red-100'}`}>
+          <div className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${open ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`} />
+            <span className={`text-xs font-bold ${open ? 'text-green-700' : 'text-red-700'}`}>
+              {open ? 'Ouvert maintenant' : 'Fermé · Ouvre à 10h30'}
+            </span>
+          </div>
+          <span className={`text-xs font-semibold ${open ? 'text-green-600' : 'text-red-500'}`}>10h30 – 21h30</span>
+        </div>
+
+        <div className="h-px bg-gray-100 mt-3 mb-3" />
 
         {/* Tags */}
         <div className="flex gap-1.5 flex-wrap">
@@ -146,19 +145,15 @@ export default function RestaurantHero() {
           ))}
         </div>
 
-        {/* Info grid */}
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          <div className="bg-green-50 rounded-xl px-3 py-2.5 text-center">
+        {/* Delivery info grid */}
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="bg-green-50 rounded-xl px-3 py-2.5 text-center border border-green-100">
             <p className="text-[10px] text-gray-400 font-medium mb-0.5">Livraison</p>
-            <p className="text-xs font-black text-green-700">15–25 DH</p>
+            <p className="text-sm font-black text-green-700">15 – 25 DH</p>
           </div>
-          <div className="bg-amber-50 rounded-xl px-3 py-2.5 text-center">
-            <p className="text-[10px] text-gray-400 font-medium mb-0.5">Minimum</p>
-            <p className="text-xs font-black text-amber-700">50 DH</p>
-          </div>
-          <div className={`rounded-xl px-3 py-2.5 text-center ${open ? 'bg-green-50' : 'bg-red-50'}`}>
-            <p className="text-[10px] text-gray-400 font-medium mb-0.5">Horaires</p>
-            <p className={`text-xs font-black ${open ? 'text-green-700' : 'text-red-600'}`}>10h30–21h30</p>
+          <div className="bg-amber-50 rounded-xl px-3 py-2.5 text-center border border-amber-100">
+            <p className="text-[10px] text-gray-400 font-medium mb-0.5">Commande minimum</p>
+            <p className="text-sm font-black text-amber-700">50 DH</p>
           </div>
         </div>
 
