@@ -14,7 +14,7 @@ import {
   NEAR_NEIGHBORHOODS, FAR_NEIGHBORHOODS, VFAR_NEIGHBORHOODS,
 } from '@/app/lib/delivery';
 
-const RESTAURANT_PHONE = '212600000000';
+const RESTAURANT_PHONE = '212693493661';
 
 const categoryEmojis: Record<string, string> = {
   tajins: '🫕', salads: '🥗', briwat: '🥟', couscous: '🍲',

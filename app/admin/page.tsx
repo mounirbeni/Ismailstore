@@ -39,7 +39,6 @@ function playNewOrderSound() {
   } catch {}
 }
 
-const ADMIN_PASSWORD = 'darIsmail123';
 
 const STATUS_CONFIG: Record<OrderStatus, { label: string; textColor: string; bgColor: string; border: string }> = {
   new:        { label: '🔴 Nouveau',        textColor: 'text-orange-700', bgColor: 'bg-orange-100', border: 'border-orange-400' },
@@ -76,7 +75,13 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState('');
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && localStorage.getItem('adminAuthed') === '1') setAuthed(true);
+    const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
+    if (!token) return;
+    fetch('/api/admin/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    }).then(r => { if (r.ok) setAuthed(true); else localStorage.removeItem('adminToken'); });
   }, []);
 
   const [orders, setOrders] = useState<Order[]>([]);
@@ -125,10 +130,21 @@ export default function AdminPage() {
     return () => { clearInterval(interval); window.removeEventListener('ordersUpdated', loadOrders); };
   }, [authed, loadOrders]);
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) { localStorage.setItem('adminAuthed', '1'); setAuthed(true); requestNotificationPermission(); }
-    else setLoginError('Mot de passe incorrect');
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
+    if (res.ok) {
+      const { token } = await res.json();
+      localStorage.setItem('adminToken', token);
+      setAuthed(true);
+      requestNotificationPermission();
+    } else {
+      setLoginError('Mot de passe incorrect');
+    }
   }
 
   async function handleStatusUpdate(id: string, status: OrderStatus) {
@@ -183,7 +199,7 @@ export default function AdminPage() {
               {soundEnabled ? <Bell className="w-4 h-4 text-amber-600" /> : <BellOff className="w-4 h-4 text-gray-400" />}
             </button>
             <button onClick={loadOrders} className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><RefreshCw className="w-4 h-4 text-gray-600" /></button>
-            <button onClick={() => { localStorage.removeItem('adminAuthed'); setAuthed(false); }} className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><LogOut className="w-4 h-4 text-gray-600" /></button>
+            <button onClick={() => { localStorage.removeItem('adminToken'); setAuthed(false); }} className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><LogOut className="w-4 h-4 text-gray-600" /></button>
           </div>
         </div>
       </div>
