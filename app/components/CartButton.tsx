@@ -18,9 +18,7 @@ export default function CartButton() {
           <div className="flex items-center gap-3">
             <div className="relative">
               <ShoppingBag className="w-5 h-5" />
-              <span className="absolute -top-2 -right-2 bg-white text-amber-600 text-xs font-black w-4 h-4 rounded-full flex items-center justify-center">
-                {totalItems}
-              </span>
+              <span className="absolute -top-2 -right-2 bg-white text-amber-600 text-xs font-black w-4 h-4 rounded-full flex items-center justify-center">{totalItems}</span>
             </div>
             <span>Voir le panier</span>
           </div>

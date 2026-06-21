@@ -7,17 +7,9 @@ export async function PATCH(
 ) {
   const { id } = await params;
   const body = await request.json();
-
-  if ('available' in body) {
-    await sql`UPDATE menu_items SET available = ${body.available} WHERE id = ${id}`;
-  }
-  if ('price' in body) {
-    await sql`UPDATE menu_items SET price = ${body.price} WHERE id = ${id}`;
-  }
-  if ('name' in body) {
-    await sql`UPDATE menu_items SET name = ${body.name} WHERE id = ${id}`;
-  }
-
+  if ('available' in body) await sql`UPDATE menu_items SET available = ${body.available} WHERE id = ${id}`;
+  if ('price' in body) await sql`UPDATE menu_items SET price = ${body.price} WHERE id = ${id}`;
+  if ('name' in body) await sql`UPDATE menu_items SET name = ${body.name} WHERE id = ${id}`;
   return NextResponse.json({ success: true });
 }
 

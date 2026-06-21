@@ -44,19 +44,10 @@ export async function POST(request: NextRequest) {
       customer_name, customer_phone, customer_neighborhood, customer_address, customer_notes,
       subtotal, delivery_fee, total, payment_method, items
     ) VALUES (
-      ${order.id},
-      ${order.orderNumber},
-      ${order.status},
-      ${order.createdAt},
-      ${order.customer.name},
-      ${order.customer.phone},
-      ${order.customer.neighborhood},
-      ${order.customer.address},
-      ${order.customer.notes || null},
-      ${order.subtotal},
-      ${order.deliveryFee},
-      ${order.total},
-      ${order.paymentMethod},
+      ${order.id}, ${order.orderNumber}, ${order.status}, ${order.createdAt},
+      ${order.customer.name}, ${order.customer.phone}, ${order.customer.neighborhood},
+      ${order.customer.address}, ${order.customer.notes || null},
+      ${order.subtotal}, ${order.deliveryFee}, ${order.total}, ${order.paymentMethod},
       ${JSON.stringify(order.items)}
     )
   `;
