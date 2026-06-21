@@ -74,7 +74,7 @@ function SectionHeader({ cat }: { cat: string }) {
   const info = sectionTitles[cat];
   if (!info) return null;
   return (
-    <div className="flex items-center gap-3 px-4 py-3 bg-white sticky top-[49px] z-10 border-b border-gray-50">
+    <div className="flex items-center gap-3 px-4 py-3 bg-white sticky top-[49px] lg:top-0 z-10 border-b border-gray-50">
       <span className="text-xl">{info.icon}</span>
       <div>
         <h2 className="font-black text-gray-900 text-base leading-none">{info.title}</h2>

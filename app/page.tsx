@@ -8,7 +8,9 @@ import CartButton from '@/app/components/CartButton';
 import CartDrawer from '@/app/components/CartDrawer';
 import CheckoutModal from '@/app/components/CheckoutModal';
 import ProductModal from '@/app/components/ProductModal';
+import DesktopHeader from '@/app/components/DesktopHeader';
 import DesktopCartPanel from '@/app/components/DesktopCartPanel';
+import DesktopCategorySidebar from '@/app/components/DesktopCategorySidebar';
 import { useCart } from '@/app/context/CartContext';
 import { MenuItem, Category, menuItems as staticItems, categories as staticCats } from '@/app/data/menu';
 
@@ -34,23 +36,44 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white">
 
-      {/* ── DESKTOP: two-column layout ─────────────────────────────── */}
-      <div className="hidden lg:flex lg:h-screen lg:overflow-hidden">
-        {/* Left: scrollable menu */}
-        <div className="flex-1 overflow-y-auto">
-          <RestaurantHero />
-          <div className="sticky top-0 z-20">
-            <CategoryTabs active={activeCategory} onSelect={setActiveCategory} categories={categories} />
+      {/* ═══════════════════════════════════════════════════════
+          DESKTOP LAYOUT  — 3 columns (hidden on mobile)
+      ═══════════════════════════════════════════════════════ */}
+      <div className="hidden lg:flex lg:flex-col lg:h-screen lg:overflow-hidden">
+
+        {/* Sticky top header */}
+        <DesktopHeader />
+
+        {/* Body: banner + 3 columns */}
+        <div className="flex flex-1 min-h-0 overflow-hidden">
+
+          {/* Left sidebar — category nav */}
+          <aside className="w-52 flex-shrink-0 border-r border-gray-100 overflow-y-auto bg-white">
+            <DesktopCategorySidebar
+              active={activeCategory}
+              onSelect={setActiveCategory}
+              categories={categories}
+            />
+          </aside>
+
+          {/* Center — banner + menu */}
+          <div className="flex-1 overflow-y-auto bg-gray-50/30">
+            <RestaurantHero />
+            <div className="bg-white">
+              <MenuSection activeCategory={activeCategory} menuItems={menuItems} />
+            </div>
           </div>
-          <MenuSection activeCategory={activeCategory} menuItems={menuItems} />
+
+          {/* Right sidebar — cart */}
+          <aside className="w-[390px] flex-shrink-0 flex flex-col overflow-hidden border-l border-gray-100 bg-white">
+            <DesktopCartPanel />
+          </aside>
         </div>
-        {/* Right: sticky cart sidebar */}
-        <aside className="w-[400px] flex-shrink-0 flex flex-col sticky top-0 h-screen overflow-hidden">
-          <DesktopCartPanel />
-        </aside>
       </div>
 
-      {/* ── MOBILE: stacked layout ─────────────────────────────────── */}
+      {/* ═══════════════════════════════════════════════════════
+          MOBILE LAYOUT  (hidden on desktop)
+      ═══════════════════════════════════════════════════════ */}
       <div className="lg:hidden">
         <RestaurantHero />
         <CategoryTabs active={activeCategory} onSelect={setActiveCategory} categories={categories} />
@@ -59,7 +82,7 @@ export default function Home() {
         <CartDrawer />
       </div>
 
-      {/* ── Shared modals ──────────────────────────────────────────── */}
+      {/* Shared modals */}
       <ProductModal />
       <CheckoutModal
         isOpen={state.isCheckoutOpen}
