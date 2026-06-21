@@ -1,6 +1,6 @@
-// Dar Ismail — Massira 3, Marrakech
-const RESTAURANT = { lat: 31.6068, lng: -8.0365 };
+const RESTAURANT = { lat: 31.6461, lng: -8.0714 };
 
+// Approximate center coordinates for each Marrakech neighborhood
 const NEIGHBORHOOD_COORDS: Record<string, { lat: number; lng: number; group: 'near' | 'far' }> = {
   'Massira 1':            { lat: 31.6110, lng: -8.0340, group: 'near' },
   'Massira 2':            { lat: 31.6090, lng: -8.0352, group: 'near' },
@@ -50,8 +50,11 @@ export function calcDeliveryInfo(neighborhood: string): DeliveryInfo {
   if (!data) return { minutes: 45, distanceKm: 0 };
 
   const straightKm = haversineKm(RESTAURANT.lat, RESTAURANT.lng, data.lat, data.lng);
+  // Road factor 1.4 accounts for streets not being straight lines
   const roadKm = straightKm * 1.4;
+  // Average motorcycle speed in Marrakech city traffic: ~25 km/h
   const travelMin = (roadKm / 25) * 60;
+  // Add 10 min preparation time, round up to nearest 5 min
   const total = Math.ceil((travelMin + 10) / 5) * 5;
 
   return {
