@@ -4,40 +4,21 @@ import { useState } from 'react';
 import Link from 'next/link';
 import {
   X, ChevronRight, ChevronLeft, MapPin, User, Phone,
-  CheckCircle, Clock, MessageCircle, Banknote, Package,
+  CheckCircle, Clock, MessageCircle, Banknote, Package, Navigation,
 } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
 import { saveOrder, generateOrderNumber } from '@/app/lib/orders';
 import { Order, CustomerInfo } from '@/app/types/order';
-
-const NEAR_NEIGHBORHOODS = new Set([
-  'Massira 1', 'Massira 2', 'Massira 3', 'Massira 4',
-  'Hay Salam', 'Amerchich', "M'Hamid", 'Sidi Youssef Ben Ali',
-  'Hay Mohammadi', 'Assif',
-]);
-
-const FAR_NEIGHBORHOODS = [
-  'Médina', 'Guéliz', 'Hivernage', 'Majorelle', 'Bab Doukkala',
-  'Mellah', 'Daoudiate', 'Targa', 'Annakhil', 'Palmeraie',
-  'Sidi Ghanem', 'Route de Fès', "Route d'Ourika", 'Route de Casablanca',
-];
+import {
+  calcDeliveryInfo, getArrivalTime,
+  NEAR_NEIGHBORHOODS, FAR_NEIGHBORHOODS,
+} from '@/app/lib/delivery';
 
 const RESTAURANT_PHONE = '212600000000';
 
 const categoryEmojis: Record<string, string> = {
   tajins: '🫕', salads: '🥗', briwat: '🥟', couscous: '🍲',
 };
-
-function getDeliveryMinutes(neighborhood: string): number {
-  return NEAR_NEIGHBORHOODS.has(neighborhood) ? 30 : 60;
-}
-
-function getArrivalTime(minutes: number): string {
-  return new Date(Date.now() + minutes * 60000).toLocaleTimeString('fr-MA', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
 
 interface Props {
   isOpen: boolean;
@@ -56,7 +37,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
 
   const deliveryFee = 15;
   const total = totalPrice + deliveryFee;
-  const deliveryMinutes = customer.neighborhood ? getDeliveryMinutes(customer.neighborhood) : null;
+  const deliveryInfo = customer.neighborhood ? calcDeliveryInfo(customer.neighborhood) : null;
 
   function validateStep1() {
     const e: Partial<CustomerInfo> = {};
@@ -120,7 +101,8 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
   }
 
   function buildWhatsAppUrl(order: Order): string {
-    const minutes = getDeliveryMinutes(order.customer.neighborhood);
+    const info = calcDeliveryInfo(order.customer.neighborhood);
+    const arrival = getArrivalTime(info.minutes);
     const items = order.items
       .map(i => `  • ${i.name} ×${i.quantity} — ${i.price * i.quantity} DH`)
       .join('\n');
@@ -139,7 +121,8 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
       '',
       `📦 Livraison: ${order.deliveryFee} DH`,
       `💰 *Total: ${order.total} DH*`,
-      `⏱️ Délai estimé: ${minutes} min`,
+      `📏 Distance: ~${info.distanceKm} km`,
+      `⏱️ Délai estimé: ~${info.minutes} min (vers ${arrival})`,
       '💵 Paiement à la livraison',
     ].filter(Boolean).join('\n');
     return `https://wa.me/${RESTAURANT_PHONE}?text=${encodeURIComponent(msg)}`;
@@ -215,14 +198,14 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto px-6 py-4">
 
-            {/* Step 1: Personal info */}
+            {/* Step 1 */}
             {step === 1 && (
               <div className="space-y-5">
                 <div className="bg-amber-50 rounded-2xl p-4 flex items-center gap-3">
                   <span className="text-2xl">🛵</span>
                   <div>
                     <p className="font-semibold text-gray-900 text-sm">Livraison à Marrakech uniquement</p>
-                    <p className="text-gray-500 text-xs">30–60 min · Paiement en espèces à la livraison</p>
+                    <p className="text-gray-500 text-xs">Temps calculé selon votre quartier · Paiement à la livraison</p>
                   </div>
                 </div>
 
@@ -262,7 +245,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
               </div>
             )}
 
-            {/* Step 2: Address */}
+            {/* Step 2 */}
             {step === 2 && (
               <div className="space-y-5">
                 <div>
@@ -278,12 +261,12 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                     }`}
                   >
                     <option value="">Choisir un quartier...</option>
-                    <optgroup label="⚡ Proche — ~30 min">
-                      {Array.from(NEAR_NEIGHBORHOODS).map(n => (
+                    <optgroup label="Quartiers proches">
+                      {NEAR_NEIGHBORHOODS.map(n => (
                         <option key={n} value={n}>{n}</option>
                       ))}
                     </optgroup>
-                    <optgroup label="🛵 Plus loin — ~60 min">
+                    <optgroup label="Quartiers plus éloignés">
                       {FAR_NEIGHBORHOODS.map(n => (
                         <option key={n} value={n}>{n}</option>
                       ))}
@@ -291,19 +274,26 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   </select>
                   {errors.neighborhood && <p className="text-red-500 text-xs mt-1">{errors.neighborhood}</p>}
 
-                  {/* Delivery time badge */}
-                  {deliveryMinutes !== null && (
-                    <div className={`mt-3 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium ${
-                      deliveryMinutes === 30
-                        ? 'bg-green-50 border border-green-200 text-green-700'
-                        : 'bg-orange-50 border border-orange-200 text-orange-700'
+                  {/* Dynamic delivery time badge */}
+                  {deliveryInfo && (
+                    <div className={`mt-3 rounded-xl border px-4 py-3 ${
+                      deliveryInfo.minutes <= 25
+                        ? 'bg-green-50 border-green-200 text-green-800'
+                        : deliveryInfo.minutes <= 40
+                        ? 'bg-amber-50 border-amber-200 text-amber-800'
+                        : 'bg-orange-50 border-orange-200 text-orange-800'
                     }`}>
-                      <Clock className="w-4 h-4 flex-shrink-0" />
-                      <span>
-                        Livraison estimée :{' '}
-                        <strong>{deliveryMinutes === 30 ? '~30 minutes' : '~1 heure'}</strong>
-                        {' '}· vers <strong>{getArrivalTime(deliveryMinutes)}</strong>
-                      </span>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Navigation className="w-4 h-4 flex-shrink-0" />
+                        <span className="text-xs font-semibold uppercase tracking-wide">Livraison estimée</span>
+                      </div>
+                      <div className="flex items-baseline justify-between">
+                        <span className="text-2xl font-black">~{deliveryInfo.minutes} min</span>
+                        <div className="text-right text-xs opacity-75">
+                          <div>{deliveryInfo.distanceKm} km de route</div>
+                          <div>vers <strong>{getArrivalTime(deliveryInfo.minutes)}</strong></div>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -338,10 +328,9 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
               </div>
             )}
 
-            {/* Step 3: Summary */}
+            {/* Step 3 */}
             {step === 3 && (
               <div className="space-y-4">
-                {/* Delivery recap */}
                 <div className="bg-gray-50 rounded-2xl p-4 space-y-2">
                   <div className="flex items-center gap-2 text-sm">
                     <User className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -361,19 +350,18 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                       <span>{customer.notes}</span>
                     </div>
                   )}
-                  {deliveryMinutes !== null && (
-                    <div className="flex items-center gap-2 text-sm pt-1 border-t border-gray-200 mt-1">
+                  {deliveryInfo && (
+                    <div className="flex items-center gap-2 text-sm pt-2 border-t border-gray-200 mt-1">
                       <Clock className="w-4 h-4 text-amber-500 flex-shrink-0" />
                       <span className="text-gray-700">
-                        Livraison estimée :{' '}
-                        <strong>{deliveryMinutes === 30 ? '~30 min' : '~1 heure'}</strong>
-                        {' '}· vers <strong>{getArrivalTime(deliveryMinutes)}</strong>
+                        <strong>~{deliveryInfo.minutes} min</strong>
+                        <span className="text-gray-400"> ({deliveryInfo.distanceKm} km)</span>
+                        {' '}· vers <strong>{getArrivalTime(deliveryInfo.minutes)}</strong>
                       </span>
                     </div>
                   )}
                 </div>
 
-                {/* Items */}
                 <div>
                   <h3 className="font-bold text-gray-900 text-sm mb-3">Votre commande</h3>
                   <div className="space-y-2">
@@ -392,7 +380,6 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   </div>
                 </div>
 
-                {/* Price breakdown */}
                 <div className="bg-gray-50 rounded-2xl p-4 space-y-2">
                   <div className="flex justify-between text-sm text-gray-600">
                     <span>Sous-total</span>
@@ -408,7 +395,6 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   </div>
                 </div>
 
-                {/* Payment method */}
                 <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-2xl p-4">
                   <Banknote className="w-6 h-6 text-green-600 flex-shrink-0" />
                   <div>
@@ -419,10 +405,10 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
               </div>
             )}
 
-            {/* Step 4: Success */}
+            {/* Step 4 */}
             {step === 4 && placedOrder && (() => {
-              const mins = getDeliveryMinutes(placedOrder.customer.neighborhood);
-              const arrival = getArrivalTime(mins);
+              const info = calcDeliveryInfo(placedOrder.customer.neighborhood);
+              const arrival = getArrivalTime(info.minutes);
               return (
                 <div className="flex flex-col items-center text-center py-4 gap-5">
                   <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
@@ -441,13 +427,25 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                     <p className="text-3xl font-black text-amber-700 mt-1">{placedOrder.orderNumber}</p>
                   </div>
 
-                  <div className="flex items-center gap-2 text-gray-700 bg-gray-50 rounded-2xl px-5 py-3 w-full">
-                    <Clock className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                    <span className="text-sm">
-                      Livraison estimée :{' '}
-                      <strong>{mins === 30 ? '~30 minutes' : '~1 heure'}</strong>
-                      {' '}· vers <strong>{arrival}</strong>
-                    </span>
+                  {/* Delivery time card */}
+                  <div className="w-full bg-gray-50 rounded-2xl p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-5 h-5 text-amber-500" />
+                        <div className="text-left">
+                          <p className="text-xs text-gray-500">Livraison estimée</p>
+                          <p className="font-black text-gray-900 text-xl">~{info.minutes} min</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-gray-500">Arrivée vers</p>
+                        <p className="font-black text-amber-600 text-xl">{arrival}</p>
+                      </div>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-gray-200 flex items-center gap-1.5 text-xs text-gray-400">
+                      <Navigation className="w-3 h-3" />
+                      <span>{info.distanceKm} km · Dar Ismail → {placedOrder.customer.neighborhood}</span>
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-2 text-gray-600 bg-green-50 rounded-2xl px-5 py-3 w-full">
