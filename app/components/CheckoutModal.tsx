@@ -11,7 +11,7 @@ import { saveOrder, generateOrderNumber } from '@/app/lib/orders';
 import { Order, CustomerInfo } from '@/app/types/order';
 import {
   calcDeliveryInfo, calcDeliveryFee, getArrivalTime,
-  NEAR_NEIGHBORHOODS, FAR_NEIGHBORHOODS,
+  NEAR_NEIGHBORHOODS, FAR_NEIGHBORHOODS, VFAR_NEIGHBORHOODS,
 } from '@/app/lib/delivery';
 
 const RESTAURANT_PHONE = '212600000000';
@@ -236,6 +236,9 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                     </optgroup>
                     <optgroup label="🔵 Quartiers éloignés — 20 DH">
                       {FAR_NEIGHBORHOODS.map(n => <option key={n} value={n}>{n}</option>)}
+                    </optgroup>
+                    <optgroup label="🔴 Très éloignés — 25 DH">
+                      {VFAR_NEIGHBORHOODS.map(n => <option key={n} value={n}>{n}</option>)}
                     </optgroup>
                   </select>
                   {errors.neighborhood && <p className="text-red-500 text-xs mt-1">{errors.neighborhood}</p>}

@@ -82,7 +82,7 @@ export default function RestaurantHero() {
         {/* Delivery info */}
         <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100 text-xs">
           <div className="flex items-center gap-3 text-gray-500">
-            <span className="text-green-600 font-semibold">Livraison 15–20 DH</span>
+            <span className="text-green-600 font-semibold">Livraison 15–25 DH</span>
             <span>·</span>
             <span>Min. 50 DH</span>
           </div>
