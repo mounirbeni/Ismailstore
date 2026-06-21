@@ -1,25 +1,27 @@
 'use client';
 
-import { menuItems } from '@/app/data/menu';
+import { MenuItem } from '@/app/data/menu';
 import MenuCard from './MenuCard';
 
 interface Props {
   activeCategory: string;
+  menuItems: MenuItem[];
 }
 
 const sectionTitles: Record<string, { title: string; subtitle: string; icon: string }> = {
-  tajins: { title: 'Tajins & Tanjia', subtitle: 'Slow-cooked Moroccan classics', icon: '🫕' },
-  salads: { title: 'Salades', subtitle: 'Fresh starters & sides', icon: '🥗' },
-  briwat: { title: 'Briwat', subtitle: 'Crispy pastry bites', icon: '🥟' },
-  couscous: { title: 'Couscous', subtitle: 'Steamed semolina dishes', icon: '🍲' },
+  tajins:   { title: 'Tajins & Tanjia', subtitle: 'Slow-cooked Moroccan classics', icon: '🫕' },
+  salads:   { title: 'Salades',         subtitle: 'Fresh starters & sides',        icon: '🥗' },
+  briwat:   { title: 'Briwat',          subtitle: 'Crispy pastry bites',           icon: '🥟' },
+  couscous: { title: 'Couscous',        subtitle: 'Steamed semolina dishes',       icon: '🍲' },
 };
 
-export default function MenuSection({ activeCategory }: Props) {
+export default function MenuSection({ activeCategory, menuItems }: Props) {
   if (activeCategory === 'all') {
     return (
       <div className="space-y-8 p-4 pb-32">
         {['tajins', 'salads', 'briwat', 'couscous'].map(cat => {
           const items = menuItems.filter(i => i.category === cat);
+          if (items.length === 0) return null;
           const info = sectionTitles[cat];
           return (
             <section key={cat}>
@@ -40,8 +42,8 @@ export default function MenuSection({ activeCategory }: Props) {
     );
   }
 
-  const info = sectionTitles[activeCategory] ?? { title: activeCategory, subtitle: '', icon: '🍽️' };
   const filtered = menuItems.filter(i => i.category === activeCategory);
+  const info = sectionTitles[activeCategory] ?? { title: activeCategory, subtitle: '', icon: '🍽️' };
 
   return (
     <div className="p-4 pb-32">

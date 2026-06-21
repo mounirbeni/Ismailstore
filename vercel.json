@@ -1,1 +1,4 @@
-{"framework": "nextjs"}
+{
+  "framework": "nextjs",
+  "installCommand": "npm install @neondatabase/serverless && npm install"
+}
