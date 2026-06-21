@@ -33,6 +33,7 @@ export default function MenuCard({ item }: Props) {
   const { state, dispatch } = useCart();
   const cartItem = state.items.find(i => i.id === item.id);
   const qty = cartItem?.quantity ?? 0;
+
   const badge = item.badge ? badgeConfig[item.badge] : null;
   const gradient = categoryColors[item.category] ?? 'from-gray-400 to-gray-500';
   const emoji = categoryEmojis[item.category] ?? '🍽️';
@@ -43,7 +44,8 @@ export default function MenuCard({ item }: Props) {
         <span className="text-5xl group-hover:scale-110 transition-transform duration-300">{emoji}</span>
         {badge && (
           <span className={`absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${badge.className}`}>
-            {badge.icon}{badge.label}
+            {badge.icon}
+            {badge.label}
           </span>
         )}
         <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1">

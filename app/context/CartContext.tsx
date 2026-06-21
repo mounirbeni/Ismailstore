@@ -39,12 +39,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     case 'ADD_ITEM': {
       const existing = state.items.find(i => i.id === action.payload.id);
       if (existing) {
-        return {
-          ...state,
-          items: state.items.map(i =>
-            i.id === action.payload.id ? { ...i, quantity: i.quantity + 1 } : i
-          ),
-        };
+        return { ...state, items: state.items.map(i => i.id === action.payload.id ? { ...i, quantity: i.quantity + 1 } : i) };
       }
       return { ...state, items: [...state.items, { ...action.payload, quantity: 1 }] };
     }
@@ -54,12 +49,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       if (action.payload.quantity <= 0) {
         return { ...state, items: state.items.filter(i => i.id !== action.payload.id) };
       }
-      return {
-        ...state,
-        items: state.items.map(i =>
-          i.id === action.payload.id ? { ...i, quantity: action.payload.quantity } : i
-        ),
-      };
+      return { ...state, items: state.items.map(i => i.id === action.payload.id ? { ...i, quantity: action.payload.quantity } : i) };
     case 'CLEAR_CART':
       return { ...state, items: [] };
     case 'TOGGLE_CART':
