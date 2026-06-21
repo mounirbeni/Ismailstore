@@ -90,9 +90,9 @@ export default function MenuSection({ activeCategory, menuItems }: Props) {
   if (activeCategory !== 'all') {
     const filtered = menuItems.filter(i => i.category === activeCategory);
     return (
-      <div className="bg-white pb-32">
+      <div className="bg-white pb-32 lg:pb-8">
         <SectionHeader cat={activeCategory} />
-        <div className="px-4">
+        <div className="px-4 lg:grid lg:grid-cols-2 lg:gap-x-6">
           {filtered.map(item => <MenuCard key={item.id} item={item} />)}
         </div>
       </div>
@@ -102,7 +102,7 @@ export default function MenuSection({ activeCategory, menuItems }: Props) {
   const ORDER = ['tajins', 'salads', 'briwat', 'couscous'];
 
   return (
-    <div className="bg-white pb-32">
+    <div className="bg-white pb-32 lg:pb-8">
       {/* Popular section */}
       {popular.length > 0 && (
         <div className="mb-2">
@@ -124,7 +124,7 @@ export default function MenuSection({ activeCategory, menuItems }: Props) {
         return (
           <div key={cat}>
             <SectionHeader cat={cat} />
-            <div className="px-4">
+            <div className="px-4 lg:grid lg:grid-cols-2 lg:gap-x-6">
               {items.map(item => <MenuCard key={item.id} item={item} />)}
             </div>
           </div>
