@@ -54,7 +54,7 @@ export default function DesktopHeader() {
         <span className="text-gray-200">·</span>
         <div className="flex items-center gap-1.5">
           <Zap className="w-3.5 h-3.5 text-green-500" />
-          <span className="text-green-600 font-semibold">Livraison gratuite 🎉</span>
+          <span className="text-amber-600 font-semibold">Livraison 15 DH</span>
         </div>
         <span className="text-gray-200">·</span>
         <span>Min. 50 DH</span>

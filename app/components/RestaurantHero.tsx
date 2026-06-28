@@ -122,7 +122,7 @@ export default function RestaurantHero() {
           <div className="mt-3 grid grid-cols-2 gap-2">
             <div className="bg-green-50 rounded-xl px-3 py-2.5 text-center border border-green-100">
               <p className="text-[10px] text-gray-400 font-medium mb-0.5">Livraison</p>
-              <p className="text-sm font-black text-green-700">Gratuite 🎉</p>
+              <p className="text-sm font-black text-green-700">15 DH</p>
             </div>
             <div className="bg-amber-50 rounded-xl px-3 py-2.5 text-center border border-amber-100">
               <p className="text-[10px] text-gray-400 font-medium mb-0.5">Commande minimum</p>

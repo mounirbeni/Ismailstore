@@ -15,7 +15,8 @@ const categoryEmojis: Record<string, string> = {
 export default function CartDrawer() {
   const { state, dispatch, totalItems, totalPrice } = useCart();
 
-  const total = totalPrice;
+  const deliveryFee = 15;
+  const total = totalPrice + deliveryFee;
   const canCheckout = totalPrice >= MIN_ORDER;
   const remaining = MIN_ORDER - totalPrice;
 
@@ -148,7 +149,7 @@ export default function CartDrawer() {
                 </div>
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>Livraison</span>
-                  <span className="font-semibold text-green-600">Gratuite 🎉</span>
+                  <span className="font-semibold text-gray-700">15 DH</span>
                 </div>
                 <div className="flex justify-between font-black text-gray-900 text-base pt-2 border-t border-gray-100">
                   <span>Total</span>
@@ -166,7 +167,7 @@ export default function CartDrawer() {
                 }`}
               >
                 {canCheckout
-                  ? `Commander · ${totalPrice} DH`
+                  ? `Commander · ${total} DH`
                   : `Minimum 50 DH requis`}
               </button>
 

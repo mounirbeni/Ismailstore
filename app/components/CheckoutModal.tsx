@@ -35,8 +35,8 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
   const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const deliveryFee = 0;
-  const total = totalPrice;
+  const deliveryFee = 15;
+  const total = totalPrice + deliveryFee;
   const deliveryInfo = customer.neighborhood ? calcDeliveryInfo(customer.neighborhood) : null;
 
   function validateStep1() {
@@ -115,7 +115,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
       '*🛒 Commande:*',
       items,
       '',
-      `🚚 Livraison: Gratuite`,
+      `🚚 Livraison: 15 DH`,
       `💰 *Total: ${order.total} DH*`,
       '💵 Paiement à la livraison',
     ].filter(Boolean).join('\n');
@@ -313,7 +313,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   </div>
                   <div className="flex justify-between text-sm text-gray-500">
                     <span>Livraison</span>
-                    <span className="font-semibold text-green-600">Gratuite 🎉</span>
+                    <span className="font-semibold text-gray-700">15 DH</span>
                   </div>
                   <div className="flex justify-between font-black text-gray-900 text-base pt-2 border-t border-gray-200">
                     <span>Total</span>
@@ -347,9 +347,9 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                     <p className="text-xs text-amber-600 uppercase tracking-wider font-bold">N° de commande</p>
                     <p className="text-3xl font-black text-amber-700 mt-1 font-mono tracking-wide">{placedOrder.orderNumber}</p>
                   </div>
-                  <div className="w-full bg-green-50 border border-green-100 rounded-2xl p-4 text-center">
-                    <p className="text-green-700 font-black text-lg">🚚 Livraison gratuite</p>
-                    <p className="text-green-600 text-sm mt-0.5">Votre commande est en cours de préparation</p>
+                  <div className="w-full bg-amber-50 border border-amber-100 rounded-2xl p-4 text-center">
+                    <p className="text-amber-700 font-black text-lg">🚚 Livraison 15 DH</p>
+                    <p className="text-amber-600 text-sm mt-0.5">Votre commande est en cours de préparation</p>
                   </div>
                   <div className="flex items-center gap-2 bg-green-50 rounded-2xl px-5 py-3 w-full">
                     <Banknote className="w-4 h-4 text-green-500 flex-shrink-0" />
