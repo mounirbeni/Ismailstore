@@ -61,21 +61,25 @@ export async function initDB() {
     `;
   }
 
-  const itemRows = await sql`SELECT COUNT(*)::int AS count FROM menu_items`;
-  if (Number(itemRows[0].count) === 0) {
-    await Promise.all(
-      SEED_ITEMS.map((item, i) =>
-        sql`
-          INSERT INTO menu_items (id, name, description, price, category, image, badge, available, sort_order)
-          VALUES (
-            ${item.id}, ${item.name}, ${item.description}, ${item.price},
-            ${item.category}, ${item.image}, ${item.badge ?? null}, true, ${i}
-          )
-          ON CONFLICT (id) DO NOTHING
-        `
-      )
-    );
-  }
+  await Promise.all(
+    SEED_ITEMS.map((item, i) =>
+      sql`
+        INSERT INTO menu_items (id, name, description, price, category, image, badge, available, sort_order)
+        VALUES (
+          ${item.id}, ${item.name}, ${item.description}, ${item.price},
+          ${item.category}, ${item.image}, ${item.badge ?? null}, true, ${i}
+        )
+        ON CONFLICT (id) DO UPDATE SET
+          name = EXCLUDED.name,
+          description = EXCLUDED.description,
+          price = EXCLUDED.price,
+          category = EXCLUDED.category,
+          image = EXCLUDED.image,
+          badge = EXCLUDED.badge,
+          sort_order = EXCLUDED.sort_order
+      `
+    )
+  );
 
   initialized = true;
 }
