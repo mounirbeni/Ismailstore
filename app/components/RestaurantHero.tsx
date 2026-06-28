@@ -25,10 +25,10 @@ function checkOpen(): boolean {
 }
 
 const BANNER_STYLE = {
-  background: 'linear-gradient(150deg, #431407 0%, #7c2d12 25%, #b45309 60%, #f59e0b 100%)',
+  backgroundImage: 'url(/images/hero-cover.jpg)',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
 };
-
-const PATTERN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpolygon points='30,3 54,16 54,44 30,57 6,44 6,16' fill='none' stroke='white' stroke-width='1.5'/%3E%3Ccircle cx='30' cy='30' r='7' fill='none' stroke='white' stroke-width='1'/%3E%3C/svg%3E")`;
 
 export default function RestaurantHero() {
   const [liked, setLiked] = useState(false);
@@ -48,11 +48,7 @@ export default function RestaurantHero() {
       <div className="lg:hidden relative bg-white">
         {/* Banner */}
         <div className="w-full h-52 relative overflow-hidden" style={BANNER_STYLE}>
-          <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: PATTERN, backgroundSize: '60px 60px' }} />
-          <span className="absolute top-8 left-5 text-5xl opacity-[0.15] rotate-[-15deg] select-none pointer-events-none">🫕</span>
-          <span className="absolute top-6 right-5 text-4xl opacity-[0.12] rotate-[12deg] select-none pointer-events-none">🥘</span>
-          <span className="absolute inset-0 flex items-center justify-center text-[120px] opacity-[0.07] select-none pointer-events-none">🫕</span>
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/25 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/20" />
           {/* Top nav */}
           <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-4">
             <div className="flex items-center gap-1 bg-black/25 backdrop-blur-sm rounded-full px-3 py-1.5">
@@ -147,12 +143,7 @@ export default function RestaurantHero() {
       ══════════════════════════════════════════════════════ */}
       <div className="hidden lg:block">
         <div className="w-full h-44 relative overflow-hidden" style={BANNER_STYLE}>
-          <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: PATTERN, backgroundSize: '60px 60px' }} />
-          <span className="absolute top-6 left-8 text-6xl opacity-[0.13] rotate-[-15deg] select-none pointer-events-none">🫕</span>
-          <span className="absolute bottom-4 right-12 text-5xl opacity-[0.11] rotate-[10deg] select-none pointer-events-none">🥘</span>
-          <span className="absolute top-4 right-32 text-3xl opacity-[0.09] select-none pointer-events-none">🌿</span>
-          <span className="absolute inset-0 flex items-center justify-center text-[180px] opacity-[0.06] select-none pointer-events-none">🫕</span>
-          <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/25" />
           {/* Tags at bottom */}
           <div className="absolute bottom-4 left-8 flex items-center gap-2">
             {['🫕 Tajine', '🍲 Couscous', '🥟 Briwat', '🌿 Naturel', '🕌 Halal'].map(tag => (
