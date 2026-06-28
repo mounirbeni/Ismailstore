@@ -28,8 +28,8 @@ export default function DesktopHeader() {
     <header className="bg-white border-b border-gray-100 px-8 py-4 flex items-center gap-5 sticky top-0 z-50 shadow-sm">
       {/* Logo + name */}
       <div className="flex items-center gap-3 flex-shrink-0">
-        <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-2xl shadow-md shadow-amber-200">
-          🫕
+        <div className="w-11 h-11 rounded-2xl overflow-hidden shadow-md shadow-amber-200 flex-shrink-0">
+          <img src="/images/profile.jpg" alt="Dar Ismail" className="w-full h-full object-cover object-top" />
         </div>
         <div>
           <h1 className="font-black text-gray-900 text-xl leading-none">Dar Ismail</h1>

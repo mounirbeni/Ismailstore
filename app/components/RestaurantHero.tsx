@@ -71,7 +71,9 @@ export default function RestaurantHero() {
         <div className="mx-3 -mt-5 bg-white rounded-3xl shadow-2xl shadow-black/10 border border-gray-100 p-4 relative z-10">
           <div className="flex items-start gap-3">
             <div className="relative flex-shrink-0">
-              <div className="w-[68px] h-[68px] rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 flex items-center justify-center text-3xl shadow-xl shadow-amber-300/50 border-4 border-white -mt-9">🫕</div>
+              <div className="w-[68px] h-[68px] rounded-2xl overflow-hidden shadow-xl shadow-amber-300/50 border-4 border-white -mt-9 flex-shrink-0">
+                <img src="/images/profile.jpg" alt="Dar Ismail" className="w-full h-full object-cover object-top" />
+              </div>
               <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center ${open ? 'bg-green-400' : 'bg-gray-400'}`}>
                 <span className={`w-1.5 h-1.5 rounded-full bg-white ${open ? 'animate-pulse' : 'opacity-60'}`} />
               </div>
