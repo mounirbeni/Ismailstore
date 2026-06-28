@@ -82,12 +82,8 @@ export function calcDeliveryInfo(neighborhood: string): DeliveryInfo {
   };
 }
 
-export function calcDeliveryFee(neighborhood: string): number {
-  const data = NEIGHBORHOOD_COORDS[neighborhood];
-  if (!data) return 20;
-  if (data.group === 'near') return 15;
-  if (data.group === 'far') return 20;
-  return 25;
+export function calcDeliveryFee(_neighborhood: string): number {
+  return 0;
 }
 
 export function getArrivalTime(minutes: number): string {

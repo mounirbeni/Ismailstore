@@ -90,10 +90,6 @@ export default function RestaurantHero() {
                   <span className="font-black text-gray-800 text-xs">4.8</span>
                   <span className="text-gray-400 text-[10px]">(312)</span>
                 </div>
-                <div className="flex items-center gap-1 bg-green-50 rounded-lg px-2 py-1">
-                  <Clock className="w-3 h-3 text-green-500" />
-                  <span className="font-bold text-gray-700 text-xs">25–45 min</span>
-                </div>
                 <div className="flex items-center gap-1 bg-blue-50 rounded-lg px-2 py-1">
                   <MapPin className="w-3 h-3 text-blue-400" />
                   <span className="font-bold text-gray-700 text-xs">Marrakech</span>
@@ -126,7 +122,7 @@ export default function RestaurantHero() {
           <div className="mt-3 grid grid-cols-2 gap-2">
             <div className="bg-green-50 rounded-xl px-3 py-2.5 text-center border border-green-100">
               <p className="text-[10px] text-gray-400 font-medium mb-0.5">Livraison</p>
-              <p className="text-sm font-black text-green-700">15 – 25 DH</p>
+              <p className="text-sm font-black text-green-700">Gratuite 🎉</p>
             </div>
             <div className="bg-amber-50 rounded-xl px-3 py-2.5 text-center border border-amber-100">
               <p className="text-[10px] text-gray-400 font-medium mb-0.5">Commande minimum</p>

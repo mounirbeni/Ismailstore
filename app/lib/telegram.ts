@@ -49,8 +49,6 @@ export function formatOrderMessage(order: {
     `📍 ${order.customer.neighborhood} — ${order.customer.address}` +
     notes +
     `\n\n🧾 <b>Articles:</b>\n${itemLines}\n\n` +
-    `💰 Sous-total: ${order.subtotal} DH\n` +
-    `🚚 Livraison: ${order.deliveryFee} DH\n` +
-    `✅ <b>Total: ${order.total} DH</b>`
+    `✅ <b>Total: ${order.total} DH</b> (livraison gratuite)`
   );
 }

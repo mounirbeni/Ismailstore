@@ -1,6 +1,6 @@
 'use client';
 
-import { Star, Clock, Package, MapPin, Zap } from 'lucide-react';
+import { Star, Package, MapPin, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -48,18 +48,13 @@ export default function DesktopHeader() {
         </div>
         <span className="text-gray-200">·</span>
         <div className="flex items-center gap-1.5">
-          <Clock className="w-3.5 h-3.5 text-green-500" />
-          <span>25–45 min</span>
-        </div>
-        <span className="text-gray-200">·</span>
-        <div className="flex items-center gap-1.5">
           <MapPin className="w-3.5 h-3.5 text-blue-400" />
           <span>Marrakech</span>
         </div>
         <span className="text-gray-200">·</span>
         <div className="flex items-center gap-1.5">
-          <Zap className="w-3.5 h-3.5 text-amber-500" />
-          <span className="text-amber-600 font-semibold">Livraison 15–25 DH</span>
+          <Zap className="w-3.5 h-3.5 text-green-500" />
+          <span className="text-green-600 font-semibold">Livraison gratuite 🎉</span>
         </div>
         <span className="text-gray-200">·</span>
         <span>Min. 50 DH</span>

@@ -108,12 +108,12 @@ export default function DesktopCartPanel() {
               <span className="font-semibold text-gray-700">{totalPrice} DH</span>
             </div>
             <div className="flex justify-between text-sm text-gray-500">
-              <span>Livraison estimée</span>
-              <span className="font-semibold text-green-600">~15–25 DH</span>
+              <span>Livraison</span>
+              <span className="font-semibold text-green-600">Gratuite 🎉</span>
             </div>
             <div className="flex justify-between font-black text-gray-900 text-base pt-2 border-t border-gray-100">
-              <span>Total estimé</span>
-              <span>~{totalPrice + 15}–{totalPrice + 25} DH</span>
+              <span>Total</span>
+              <span>{totalPrice} DH</span>
             </div>
           </div>
 
@@ -126,7 +126,7 @@ export default function DesktopCartPanel() {
                 : 'bg-gray-100 text-gray-400 cursor-not-allowed'
             }`}
           >
-            {canCheckout ? `Commander · ${totalPrice} DH +livraison` : 'Minimum 50 DH requis'}
+            {canCheckout ? `Commander · ${totalPrice} DH` : 'Minimum 50 DH requis'}
           </button>
 
           <div className="flex items-center justify-center gap-1.5 text-xs text-gray-400">

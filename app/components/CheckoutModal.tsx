@@ -35,8 +35,8 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
   const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const deliveryFee = customer.neighborhood ? calcDeliveryFee(customer.neighborhood) : 15;
-  const total = totalPrice + deliveryFee;
+  const deliveryFee = 0;
+  const total = totalPrice;
   const deliveryInfo = customer.neighborhood ? calcDeliveryInfo(customer.neighborhood) : null;
 
   function validateStep1() {
@@ -115,10 +115,8 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
       '*🛒 Commande:*',
       items,
       '',
-      `📦 Livraison: ${order.deliveryFee} DH`,
+      `🚚 Livraison: Gratuite`,
       `💰 *Total: ${order.total} DH*`,
-      `📏 Distance: ~${info.distanceKm} km`,
-      `⏱️ Délai estimé: ~${info.minutes} min (vers ${arrival})`,
       '💵 Paiement à la livraison',
     ].filter(Boolean).join('\n');
     return `https://wa.me/${RESTAURANT_PHONE}?text=${encodeURIComponent(msg)}`;
@@ -231,37 +229,18 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                     className={`w-full px-4 py-3 rounded-xl border text-sm outline-none transition-colors appearance-none bg-white ${errors.neighborhood ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-amber-400'}`}
                   >
                     <option value="">Choisir un quartier...</option>
-                    <optgroup label="🟢 Quartiers proches — 15 DH">
+                    <optgroup label="Quartiers proches">
                       {NEAR_NEIGHBORHOODS.map(n => <option key={n} value={n}>{n}</option>)}
                     </optgroup>
-                    <optgroup label="🔵 Quartiers éloignés — 20 DH">
+                    <optgroup label="Quartiers éloignés">
                       {FAR_NEIGHBORHOODS.map(n => <option key={n} value={n}>{n}</option>)}
                     </optgroup>
-                    <optgroup label="🔴 Très éloignés — 25 DH">
+                    <optgroup label="Très éloignés">
                       {VFAR_NEIGHBORHOODS.map(n => <option key={n} value={n}>{n}</option>)}
                     </optgroup>
                   </select>
                   {errors.neighborhood && <p className="text-red-500 text-xs mt-1">{errors.neighborhood}</p>}
 
-                  {deliveryInfo && (
-                    <div className={`mt-3 rounded-2xl border px-4 py-3 ${
-                      deliveryInfo.minutes <= 25 ? 'bg-green-50 border-green-200 text-green-800'
-                      : deliveryInfo.minutes <= 40 ? 'bg-amber-50 border-amber-200 text-amber-800'
-                      : 'bg-orange-50 border-orange-200 text-orange-800'
-                    }`}>
-                      <div className="flex items-center gap-2 mb-1">
-                        <Navigation className="w-3.5 h-3.5 flex-shrink-0" />
-                        <span className="text-xs font-bold uppercase tracking-wide">Livraison estimée</span>
-                      </div>
-                      <div className="flex items-baseline justify-between">
-                        <span className="text-2xl font-black">~{deliveryInfo.minutes} min</span>
-                        <div className="text-right text-xs opacity-80">
-                          <div>{deliveryInfo.distanceKm} km · {deliveryFee} DH</div>
-                          <div>vers <strong>{getArrivalTime(deliveryInfo.minutes)}</strong></div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 <div>
@@ -309,16 +288,6 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                       <span>📝</span><span>{customer.notes}</span>
                     </div>
                   )}
-                  {deliveryInfo && (
-                    <div className="flex items-center gap-2 text-sm pt-2 border-t border-gray-200">
-                      <Clock className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                      <span className="text-gray-700">
-                        <strong>~{deliveryInfo.minutes} min</strong>
-                        <span className="text-gray-400"> ({deliveryInfo.distanceKm} km)</span>
-                        {' '}· vers <strong>{getArrivalTime(deliveryInfo.minutes)}</strong>
-                      </span>
-                    </div>
-                  )}
                 </div>
 
                 <div>
@@ -343,8 +312,8 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                     <span className="font-semibold text-gray-700">{totalPrice} DH</span>
                   </div>
                   <div className="flex justify-between text-sm text-gray-500">
-                    <span>Livraison ({customer.neighborhood})</span>
-                    <span className="font-semibold text-gray-700">{deliveryFee} DH</span>
+                    <span>Livraison</span>
+                    <span className="font-semibold text-green-600">Gratuite 🎉</span>
                   </div>
                   <div className="flex justify-between font-black text-gray-900 text-base pt-2 border-t border-gray-200">
                     <span>Total</span>
@@ -378,24 +347,9 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                     <p className="text-xs text-amber-600 uppercase tracking-wider font-bold">N° de commande</p>
                     <p className="text-3xl font-black text-amber-700 mt-1 font-mono tracking-wide">{placedOrder.orderNumber}</p>
                   </div>
-                  <div className="w-full bg-gray-50 rounded-2xl p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-5 h-5 text-amber-500" />
-                        <div className="text-left">
-                          <p className="text-xs text-gray-400">Livraison estimée</p>
-                          <p className="font-black text-gray-900 text-2xl">~{info.minutes} min</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-gray-400">Arrivée vers</p>
-                        <p className="font-black text-amber-600 text-2xl">{arrival}</p>
-                      </div>
-                    </div>
-                    <div className="mt-2 pt-2 border-t border-gray-200 flex items-center gap-1.5 text-xs text-gray-400">
-                      <Navigation className="w-3 h-3" />
-                      <span>{info.distanceKm} km · Dar Ismail → {placedOrder.customer.neighborhood}</span>
-                    </div>
+                  <div className="w-full bg-green-50 border border-green-100 rounded-2xl p-4 text-center">
+                    <p className="text-green-700 font-black text-lg">🚚 Livraison gratuite</p>
+                    <p className="text-green-600 text-sm mt-0.5">Votre commande est en cours de préparation</p>
                   </div>
                   <div className="flex items-center gap-2 bg-green-50 rounded-2xl px-5 py-3 w-full">
                     <Banknote className="w-4 h-4 text-green-500 flex-shrink-0" />
