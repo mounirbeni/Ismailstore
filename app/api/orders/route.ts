@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import sql, { initDB } from '@/app/lib/db';
 import { Order } from '@/app/types/order';
+import { sendTelegramNotification, formatOrderMessage } from '@/app/lib/telegram';
 
 function rowToOrder(r: any): Order {
   return {
@@ -51,5 +52,8 @@ export async function POST(request: NextRequest) {
       ${JSON.stringify(order.items)}
     )
   `;
+  // Send Telegram notification (non-blocking)
+  sendTelegramNotification(formatOrderMessage(order));
+
   return NextResponse.json({ success: true }, { status: 201 });
 }
