@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { MenuItem } from '@/app/data/menu';
 import { useCart } from '@/app/context/CartContext';
 import MenuCard from './MenuCard';
@@ -37,14 +38,20 @@ function PopularCard({ item }: { item: MenuItem }) {
   const qty = cartItem?.quantity ?? 0;
   const gradient = categoryGradients[item.category] ?? 'from-gray-400 to-gray-500';
   const emoji = categoryEmojis[item.category] ?? '🍽️';
+  const [imgError, setImgError] = useState(false);
+  const hasImage = item.image && !imgError;
 
   return (
     <div
       className="flex-shrink-0 w-36 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-visible cursor-pointer active:scale-95 transition-transform"
       onClick={() => dispatch({ type: 'SET_SELECTED_PRODUCT', payload: item })}
     >
-      <div className={`relative h-28 bg-gradient-to-br ${gradient} rounded-t-2xl flex items-center justify-center`}>
-        <span className="text-5xl">{emoji}</span>
+      <div className={`relative h-28 rounded-t-2xl overflow-hidden ${!hasImage ? `bg-gradient-to-br ${gradient} flex items-center justify-center` : ''}`}>
+        {hasImage ? (
+          <img src={item.image} alt={item.name} className="w-full h-full object-cover" onError={() => setImgError(true)} />
+        ) : (
+          <span className="text-5xl">{emoji}</span>
+        )}
         {qty > 0 && (
           <span className="absolute top-2 right-2 bg-amber-500 text-white text-xs font-black w-5 h-5 rounded-full flex items-center justify-center">
             {qty}
