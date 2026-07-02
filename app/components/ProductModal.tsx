@@ -72,8 +72,12 @@ export default function ProductModal() {
         <div className="w-full max-w-[430px] bg-white rounded-t-3xl shadow-2xl overflow-hidden">
 
           {/* Hero image */}
-          <div className={`relative h-52 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-            <span className="text-8xl drop-shadow-lg">{emoji}</span>
+          <div className={`relative h-52 overflow-hidden ${!item.image ? `bg-gradient-to-br ${gradient} flex items-center justify-center` : ''}`}>
+            {item.image ? (
+              <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-8xl drop-shadow-lg">{emoji}</span>
+            )}
             <button
               onClick={close}
               className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center active:scale-95 transition-transform"

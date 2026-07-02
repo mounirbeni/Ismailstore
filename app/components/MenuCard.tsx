@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
 import { MenuItem } from '@/app/data/menu';
 import { useCart } from '@/app/context/CartContext';
@@ -33,10 +34,12 @@ export default function MenuCard({ item }: Props) {
   const { state, dispatch } = useCart();
   const cartItem = state.items.find(i => i.id === item.id);
   const qty = cartItem?.quantity ?? 0;
+  const [imgError, setImgError] = useState(false);
 
   const badge = item.badge ? badgeConfig[item.badge] : null;
   const gradient = categoryGradients[item.category] ?? 'from-gray-400 to-gray-500';
   const emoji = categoryEmojis[item.category] ?? '🍽️';
+  const hasImage = item.image && !imgError;
 
   function openDetail() {
     dispatch({ type: 'SET_SELECTED_PRODUCT', payload: item });
@@ -49,8 +52,17 @@ export default function MenuCard({ item }: Props) {
     >
       {/* Image + qty control */}
       <div className="relative flex-shrink-0">
-        <div className={`w-[90px] h-[90px] rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm`}>
-          <span className="text-4xl">{emoji}</span>
+        <div className={`w-[90px] h-[90px] rounded-2xl overflow-hidden shadow-sm ${!hasImage ? `bg-gradient-to-br ${gradient} flex items-center justify-center` : ''}`}>
+          {hasImage ? (
+            <img
+              src={item.image}
+              alt={item.name}
+              className="w-full h-full object-cover"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <span className="text-4xl">{emoji}</span>
+          )}
         </div>
 
         {qty === 0 ? (
