@@ -54,7 +54,7 @@ export default function RestaurantHero() {
             <div className="flex items-center gap-1 bg-black/25 backdrop-blur-sm rounded-full px-3 py-1.5">
               <span className="text-white/70 text-xs">Accueil</span>
               <ChevronRight className="w-3 h-3 text-white/50" />
-              <span className="text-white font-bold text-xs">Dar Ismail</span>
+              <span className="text-white font-bold text-xs">Yed Lmiima</span>
             </div>
             <button onClick={() => setLiked(!liked)} className="w-9 h-9 rounded-full bg-black/25 backdrop-blur-sm flex items-center justify-center transition-transform active:scale-90">
               <Heart className={`w-5 h-5 transition-all duration-200 ${liked ? 'text-red-400 fill-red-400 scale-110' : 'text-white'}`} />
@@ -72,7 +72,7 @@ export default function RestaurantHero() {
           <div className="flex items-start gap-3">
             <div className="relative flex-shrink-0">
               <div className="w-[68px] h-[68px] rounded-2xl overflow-hidden shadow-xl shadow-amber-300/50 border-4 border-white -mt-9 flex-shrink-0">
-                <img src="/images/profile.jpg" alt="Dar Ismail" className="w-full h-full object-cover object-top" />
+                <img src="/images/profile.jpg" alt="Yed Lmiima" className="w-full h-full object-cover object-top" />
               </div>
               <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center ${open ? 'bg-green-400' : 'bg-gray-400'}`}>
                 <span className={`w-1.5 h-1.5 rounded-full bg-white ${open ? 'animate-pulse' : 'opacity-60'}`} />
@@ -80,7 +80,7 @@ export default function RestaurantHero() {
             </div>
             <div className="flex-1 min-w-0 pt-0.5">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl font-black text-gray-900 leading-tight">Dar Ismail</h1>
+                <h1 className="text-xl font-black text-gray-900 leading-tight">Yed Lmiima</h1>
                 <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-black rounded-full uppercase tracking-wide">Halal</span>
               </div>
               <p className="text-gray-400 text-xs mt-0.5">Cuisine marocaine authentique · Marrakech</p>

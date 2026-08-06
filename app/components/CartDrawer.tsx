@@ -65,7 +65,7 @@ export default function CartDrawer() {
           <div className="mx-4 mb-1 px-4 py-2.5 bg-amber-50 border border-amber-100 rounded-2xl flex items-center gap-3 flex-shrink-0">
             <span className="text-xl">🫕</span>
             <div>
-              <p className="font-bold text-gray-900 text-sm">Dar Ismail</p>
+              <p className="font-bold text-gray-900 text-sm">Yed Lmiima</p>
               <p className="text-gray-400 text-xs">Livraison · Marrakech</p>
             </div>
           </div>

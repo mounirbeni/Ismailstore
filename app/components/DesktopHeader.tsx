@@ -29,10 +29,10 @@ export default function DesktopHeader() {
       {/* Logo + name */}
       <div className="flex items-center gap-3 flex-shrink-0">
         <div className="w-11 h-11 rounded-2xl overflow-hidden shadow-md shadow-amber-200 flex-shrink-0">
-          <img src="/images/profile.jpg" alt="Dar Ismail" className="w-full h-full object-cover object-top" />
+          <img src="/images/profile.jpg" alt="Yed Lmiima" className="w-full h-full object-cover object-top" />
         </div>
         <div>
-          <h1 className="font-black text-gray-900 text-xl leading-none">Dar Ismail</h1>
+          <h1 className="font-black text-gray-900 text-xl leading-none">Yed Lmiima</h1>
           <p className="text-gray-400 text-xs mt-0.5">Cuisine marocaine · Marrakech</p>
         </div>
       </div>

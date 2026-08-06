@@ -9,12 +9,12 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Dar Ismail — Cuisine Marocaine Authentique",
+  title: "Yed Lmiima — Cuisine Marocaine Authentique",
   description: "Commandez vos tajines, couscous, briwat et salades marocains à Marrakech. Livraison rapide 15–25 DH.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    title: "Dar Ismail",
+    title: "Yed Lmiima",
     statusBarStyle: "default",
   },
   other: {

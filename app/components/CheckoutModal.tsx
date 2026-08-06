@@ -103,7 +103,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
       .map(i => `  • ${i.name} ×${i.quantity} — ${i.price * i.quantity} DH`)
       .join('\n');
     const msg = [
-      '🍽️ *Nouvelle commande - Dar Ismail*',
+      '🍽️ *Nouvelle commande - Yed Lmiima*',
       `📋 Commande N° *${order.orderNumber}*`,
       '',
       `👤 *Client:* ${order.customer.name}`,

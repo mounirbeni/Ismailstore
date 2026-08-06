@@ -24,7 +24,7 @@ type CartAction =
   | { type: 'SET_CHECKOUT_OPEN'; payload: boolean }
   | { type: 'SET_SELECTED_PRODUCT'; payload: MenuItem | null };
 
-const CART_KEY = 'dar_ismail_cart';
+const CART_KEY = 'yed_lmiima_cart';
 
 function getInitialState(): CartState {
   const base: CartState = { items: [], isOpen: false, isCheckoutOpen: false, selectedProduct: null };

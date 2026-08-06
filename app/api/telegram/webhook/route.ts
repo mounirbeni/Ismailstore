@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     body: JSON.stringify({
       chat_id: chatId,
       text:
-        `✅ <b>Dar Ismail bot activé!</b>\n\n` +
+        `✅ <b>Yed Lmiima bot activé!</b>\n\n` +
         `Bonjour ${firstName} 👋\n` +
         `Votre Chat ID est: <code>${chatId}</code>\n\n` +
         `Vous recevrez désormais une notification pour chaque nouvelle commande.`,

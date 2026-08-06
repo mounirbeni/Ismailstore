@@ -14,7 +14,7 @@ async function requestNotificationPermission() {
 
 function showOrderNotification(newCount: number) {
   if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-    new Notification('🫕 Dar Ismail — Nouvelle commande !', {
+    new Notification('🫕 Yed Lmiima — Nouvelle commande !', {
       body: `${newCount} nouvelle${newCount > 1 ? 's' : ''} commande${newCount > 1 ? 's' : ''} en attente`,
       icon: '/favicon.ico', tag: 'new-order',
     });
@@ -169,7 +169,7 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm">
-          <div className="text-center mb-8"><div className="text-6xl mb-3">🫕</div><h1 className="text-2xl font-black text-gray-900">Dar Ismail</h1><p className="text-gray-500 text-sm mt-1">Espace administrateur</p></div>
+          <div className="text-center mb-8"><div className="text-6xl mb-3">🫕</div><h1 className="text-2xl font-black text-gray-900">Yed Lmiima</h1><p className="text-gray-500 text-sm mt-1">Espace administrateur</p></div>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <input type="password" value={password} onChange={e => { setPassword(e.target.value); setLoginError(''); }} placeholder="Mot de passe" autoFocus className={`w-full px-4 py-3.5 rounded-xl border text-sm outline-none transition-colors ${loginError ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-amber-400'}`} />
@@ -188,7 +188,7 @@ export default function AdminPage() {
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🫕</span>
-            <div><h1 className="font-black text-gray-900 leading-none">Dar Ismail</h1><p className="text-gray-400 text-xs">Tableau de bord</p></div>
+            <div><h1 className="font-black text-gray-900 leading-none">Yed Lmiima</h1><p className="text-gray-400 text-xs">Tableau de bord</p></div>
             {newCount > 0 && <span className="bg-red-500 text-white text-xs font-black px-2 py-0.5 rounded-full animate-pulse">{newCount} nouveau{newCount > 1 ? 'x' : ''}</span>}
           </div>
           <div className="flex items-center gap-2">

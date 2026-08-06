@@ -56,7 +56,7 @@ function TrackContent() {
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center gap-3">
           <Link href="/" className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><ArrowLeft className="w-4 h-4 text-gray-600" /></Link>
-          <div><h1 className="font-black text-gray-900 leading-none">Suivi de commande</h1><p className="text-gray-400 text-xs">Dar Ismail · Marrakech</p></div>
+          <div><h1 className="font-black text-gray-900 leading-none">Suivi de commande</h1><p className="text-gray-400 text-xs">Yed Lmiima · Marrakech</p></div>
         </div>
       </div>
       <div className="max-w-lg mx-auto px-4 py-6 space-y-5">
