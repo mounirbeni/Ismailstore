@@ -89,7 +89,7 @@ export default function AdminPage() {
   const [filter, setFilter] = useState<OrderStatus | 'all'>('all');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notifPermission, setNotifPermission] = useState<NotificationPermission>('default');
-  const [activeTab, setActiveTab] = useState<'orders' | 'menu'>('orders');
+  const [activeTab, setActiveTab] = useState<'orders' | 'history' | 'menu'>('orders');
   const [adminMenuItems, setAdminMenuItems] = useState<MenuItemType[]>([]);
   const [menuLoading, setMenuLoading] = useState(false);
   const prevNewCountRef = useRef(0);
@@ -163,7 +163,25 @@ export default function AdminPage() {
   const activeCount = orders.filter(o => ['new','preparing','on_the_way'].includes(o.status)).length;
   const newCount = orders.filter(o => o.status === 'new').length;
   const todayRevenue = todayOrders.filter(o => o.status === 'delivered').reduce((s,o) => s + o.total, 0);
+  const totalRevenue = orders.filter(o => o.status === 'delivered').reduce((s,o) => s + o.total, 0);
   const displayed = filter === 'all' ? orders : orders.filter(o => o.status === filter);
+
+  function groupByDate(list: Order[]): { label: string; orders: Order[] }[] {
+    const map = new Map<string, Order[]>();
+    const now = new Date(); now.setHours(0,0,0,0);
+    const yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1);
+    list.forEach(o => {
+      const d = new Date(o.createdAt); d.setHours(0,0,0,0);
+      let label: string;
+      if (d.getTime() === now.getTime()) label = "Aujourd'hui";
+      else if (d.getTime() === yesterday.getTime()) label = 'Hier';
+      else label = d.toLocaleDateString('fr-MA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      if (!map.has(label)) map.set(label, []);
+      map.get(label)!.push(o);
+    });
+    return Array.from(map.entries()).map(([label, orders]) => ({ label, orders }));
+  }
+  const historyGroups = groupByDate(orders);
 
   if (!authed) {
     return (
@@ -208,14 +226,18 @@ export default function AdminPage() {
           <button onClick={() => setActiveTab('orders')} className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 ${activeTab === 'orders' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
             🧾 Commandes {newCount > 0 && <span className="bg-red-500 text-white text-xs font-black px-1.5 py-0.5 rounded-full">{newCount}</span>}
           </button>
+          <button onClick={() => setActiveTab('history')} className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 ${activeTab === 'history' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+            📚 Historique
+          </button>
           <button onClick={() => { setActiveTab('menu'); if (adminMenuItems.length === 0) loadMenu(); }} className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeTab === 'menu' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>🍽️ Menu</button>
         </div>
         {activeTab === 'orders' && (
           <>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100"><p className="text-3xl font-black text-orange-500">{activeCount}</p><p className="text-xs text-gray-500 mt-1 font-medium">En cours</p></div>
               <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100"><p className="text-3xl font-black text-gray-900">{todayOrders.length}</p><p className="text-xs text-gray-500 mt-1 font-medium">Aujourd&apos;hui</p></div>
-              <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100"><p className="text-3xl font-black text-green-600">{todayRevenue}</p><p className="text-xs text-gray-500 mt-1 font-medium">DH livrés</p></div>
+              <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100"><p className="text-3xl font-black text-green-600">{todayRevenue} <span className="text-base font-bold">DH</span></p><p className="text-xs text-gray-500 mt-1 font-medium">CA aujourd&apos;hui</p></div>
+              <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100"><p className="text-3xl font-black text-amber-600">{orders.length}</p><p className="text-xs text-gray-500 mt-1 font-medium">Total commandes</p></div>
             </div>
             <div className="flex gap-2 overflow-x-auto pb-1">
               {(['all','new','preparing','on_the_way','delivered','cancelled'] as const).map(f => {
@@ -262,6 +284,54 @@ export default function AdminPage() {
               </div>
             )}
           </>
+        )}
+        {activeTab === 'history' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100"><p className="text-3xl font-black text-amber-600">{orders.length}</p><p className="text-xs text-gray-500 mt-1 font-medium">Total commandes</p></div>
+              <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100"><p className="text-2xl font-black text-green-600">{totalRevenue} <span className="text-base font-bold">DH</span></p><p className="text-xs text-gray-500 mt-1 font-medium">CA total livré</p></div>
+            </div>
+            {orders.length === 0 ? (
+              <div className="bg-white rounded-3xl p-12 text-center shadow-sm"><div className="text-5xl mb-4">📚</div><p className="text-gray-900 font-semibold text-lg">Aucune commande</p></div>
+            ) : (
+              <div className="space-y-6">
+                {historyGroups.map(({ label, orders: dayOrders }) => (
+                  <div key={label}>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="font-black text-gray-700 text-sm capitalize">{label}</span>
+                      <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{dayOrders.length} commande{dayOrders.length > 1 ? 's' : ''}</span>
+                      <span className="text-xs text-green-600 font-semibold ml-auto">{dayOrders.filter(o => o.status === 'delivered').reduce((s,o) => s + o.total, 0)} DH livrés</span>
+                    </div>
+                    <div className="space-y-3">
+                      {dayOrders.map(order => {
+                        const cfg = STATUS_CONFIG[order.status];
+                        return (
+                          <div key={order.id} className={`bg-white rounded-2xl shadow-sm overflow-hidden border-l-4 ${cfg.border}`}>
+                            <div className="p-4">
+                              <div className="flex items-start justify-between mb-3">
+                                <div>
+                                  <div className="flex items-center gap-2 flex-wrap"><h3 className="font-black text-gray-900">{order.orderNumber}</h3><span className={`text-xs px-2 py-0.5 rounded-full font-bold ${cfg.bgColor} ${cfg.textColor}`}>{cfg.label}</span></div>
+                                  <p className="text-xs text-gray-400 mt-0.5">{new Date(order.createdAt).toLocaleTimeString('fr-MA', { hour: '2-digit', minute: '2-digit' })}</p>
+                                </div>
+                                <p className="font-black text-gray-900 text-lg">{order.total} DH</p>
+                              </div>
+                              <div className="bg-gray-50 rounded-xl p-3 mb-3 space-y-1">
+                                <div className="flex items-center gap-2"><span className="text-sm font-bold text-gray-900">{order.customer.name}</span><a href={`tel:${order.customer.phone}`} className="flex items-center gap-1 text-xs text-amber-600"><Phone className="w-3 h-3" />{order.customer.phone}</a></div>
+                                <div className="flex items-start gap-1 text-xs text-gray-600"><MapPin className="w-3.5 h-3.5 text-gray-400 mt-0.5 flex-shrink-0" /><span>{order.customer.neighborhood} — {order.customer.address}</span></div>
+                              </div>
+                              <div className="space-y-1">
+                                {order.items.map(item => (<div key={item.id} className="flex items-center gap-2 text-xs text-gray-600"><span>{categoryEmojis[item.category] ?? '🍽️'}</span><span className="flex-1">{item.name}</span><span className="text-gray-400">×{item.quantity}</span><span className="font-semibold text-gray-800">{item.price * item.quantity} DH</span></div>))}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         )}
         {activeTab === 'menu' && (
           <div className="space-y-6">
