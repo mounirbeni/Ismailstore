@@ -1,13 +1,10 @@
 'use client';
 
-import { Minus, Plus, ShoppingBag, Trash2, AlertCircle, Lock, UtensilsCrossed } from 'lucide-react';
+import { Minus, Plus, ShoppingBag, Trash2, AlertCircle, Lock, UtensilsCrossed, ChefHat } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
+import CategoryIcon from './CategoryIcon';
 
 const MIN_ORDER = 50;
-
-const categoryEmojis: Record<string, string> = {
-  tajins: '🫕', salads: '🥗', briwat: '🥟', couscous: '🍲',
-};
 
 export default function DesktopCartPanel() {
   const { state, dispatch, totalItems, totalPrice } = useCart();
@@ -33,7 +30,7 @@ export default function DesktopCartPanel() {
 
       {/* Restaurant tag */}
       <div className="mx-4 mt-3 mb-1 px-4 py-2.5 bg-amber-50 border border-amber-100 rounded-2xl flex items-center gap-3 flex-shrink-0">
-        <span className="text-xl">🫕</span>
+        <ChefHat className="w-5 h-5 text-amber-500 flex-shrink-0" />
         <div>
           <p className="font-bold text-gray-900 text-sm">Yed Lmiima</p>
           <p className="text-gray-400 text-xs">Livraison · Marrakech</p>
@@ -56,8 +53,8 @@ export default function DesktopCartPanel() {
           <div className="px-4 pt-2 pb-4 space-y-1">
             {state.items.map(item => (
               <div key={item.id} className="flex items-center gap-3 py-3 border-b border-gray-50 last:border-0">
-                <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center text-xl flex-shrink-0">
-                  {categoryEmojis[item.category] ?? '🍽️'}
+                <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0">
+                  <CategoryIcon category={item.category} className="w-5 h-5 text-amber-500" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-gray-900 text-sm leading-snug truncate">{item.name}</p>

@@ -4,10 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import {
   X, ChevronRight, ChevronLeft, MapPin, User, Phone,
-  CheckCircle, Clock, MessageCircle, Banknote, Package, Navigation,
+  CheckCircle, Clock, MessageCircle, Banknote, Package, Bike, FileText, Truck,
 } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
 import { saveOrder, generateOrderNumber } from '@/app/lib/orders';
+import CategoryIcon from './CategoryIcon';
 import { Order, CustomerInfo } from '@/app/types/order';
 import {
   calcDeliveryInfo, calcDeliveryFee, getArrivalTime,
@@ -15,10 +16,6 @@ import {
 } from '@/app/lib/delivery';
 
 const RESTAURANT_PHONE = '212693493661';
-
-const categoryEmojis: Record<string, string> = {
-  tajins: '🫕', salads: '🥗', briwat: '🥟', couscous: '🍲',
-};
 
 interface Props {
   isOpen: boolean;
@@ -180,7 +177,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
             {step === 1 && (
               <div className="space-y-4">
                 <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 flex items-center gap-3">
-                  <span className="text-2xl">🛵</span>
+                  <Bike className="w-6 h-6 text-amber-500 flex-shrink-0" />
                   <div>
                     <p className="font-bold text-gray-900 text-sm">Livraison à Marrakech uniquement</p>
                     <p className="text-gray-400 text-xs mt-0.5">Paiement en espèces à la livraison</p>
@@ -285,7 +282,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   </div>
                   {customer.notes && (
                     <div className="flex items-start gap-2 text-sm text-gray-500">
-                      <span>📝</span><span>{customer.notes}</span>
+                      <FileText className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" /><span>{customer.notes}</span>
                     </div>
                   )}
                 </div>
@@ -295,7 +292,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                   <div className="space-y-2">
                     {state.items.map(item => (
                       <div key={item.id} className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
-                        <span className="text-lg">{categoryEmojis[item.category] ?? '🍽️'}</span>
+                        <CategoryIcon category={item.category} className="w-5 h-5 text-gray-400 flex-shrink-0" />
                         <div className="flex-1">
                           <p className="text-sm font-semibold text-gray-900">{item.name}</p>
                         </div>
@@ -348,7 +345,7 @@ export default function CheckoutModal({ isOpen, onClose }: Props) {
                     <p className="text-3xl font-black text-amber-700 mt-1 font-mono tracking-wide">{placedOrder.orderNumber}</p>
                   </div>
                   <div className="w-full bg-amber-50 border border-amber-100 rounded-2xl p-4 text-center">
-                    <p className="text-amber-700 font-black text-lg">🚚 Livraison 15 DH</p>
+                    <p className="flex items-center justify-center gap-2 text-amber-700 font-black text-lg"><Truck className="w-5 h-5" /> Livraison 15 DH</p>
                     <p className="text-amber-600 text-sm mt-0.5">Votre commande est en cours de préparation</p>
                   </div>
                   <div className="flex items-center gap-2 bg-green-50 rounded-2xl px-5 py-3 w-full">

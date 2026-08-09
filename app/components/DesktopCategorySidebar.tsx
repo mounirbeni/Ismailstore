@@ -1,6 +1,8 @@
 'use client';
 
+import { Landmark } from 'lucide-react';
 import { Category } from '@/app/data/menu';
+import CategoryIcon from './CategoryIcon';
 
 interface Props {
   active: string;
@@ -26,7 +28,7 @@ export default function DesktopCategorySidebar({ active, onSelect, categories }:
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <span className="text-lg leading-none">{cat.icon}</span>
+                <CategoryIcon category={cat.id} className="w-5 h-5" />
                 <span>{cat.name}</span>
               </div>
               <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold min-w-[20px] text-center ${
@@ -41,7 +43,9 @@ export default function DesktopCategorySidebar({ active, onSelect, categories }:
 
       {/* Info block */}
       <div className="mt-6 mx-1 p-3 bg-amber-50 rounded-2xl border border-amber-100">
-        <p className="text-xs font-bold text-amber-800 mb-1">🕌 Halal · Traditionnel</p>
+        <p className="flex items-center gap-1.5 text-xs font-bold text-amber-800 mb-1">
+          <Landmark className="w-3.5 h-3.5" /> Halal · Traditionnel
+        </p>
         <p className="text-[11px] text-amber-700 leading-relaxed">Plats préparés à la marocaine, avec des épices fraîches.</p>
       </div>
     </nav>

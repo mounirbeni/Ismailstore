@@ -1,19 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Minus } from 'lucide-react';
+import { Plus, Minus, Star, Sparkles, Leaf, Flame } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { MenuItem } from '@/app/data/menu';
 import { useCart } from '@/app/context/CartContext';
+import CategoryIcon from './CategoryIcon';
 
 interface Props {
   item: MenuItem;
 }
 
-const badgeConfig: Record<string, { label: string; className: string }> = {
-  popular:    { label: '⭐ Populaire',  className: 'bg-amber-100 text-amber-700' },
-  new:        { label: '✨ Nouveau',    className: 'bg-blue-100 text-blue-700' },
-  vegetarian: { label: '🌿 Végétarien', className: 'bg-green-100 text-green-700' },
-  spicy:      { label: '🌶️ Épicé',      className: 'bg-red-100 text-red-700' },
+const badgeConfig: Record<string, { label: string; className: string; Icon: LucideIcon }> = {
+  popular:    { label: 'Populaire',  className: 'bg-amber-100 text-amber-700',  Icon: Star },
+  new:        { label: 'Nouveau',    className: 'bg-blue-100 text-blue-700',    Icon: Sparkles },
+  vegetarian: { label: 'Végétarien', className: 'bg-green-100 text-green-700',  Icon: Leaf },
+  spicy:      { label: 'Épicé',      className: 'bg-red-100 text-red-700',      Icon: Flame },
 };
 
 const categoryGradients: Record<string, string> = {
@@ -21,13 +23,6 @@ const categoryGradients: Record<string, string> = {
   salads:   'from-green-400 to-emerald-500',
   briwat:   'from-yellow-400 to-amber-500',
   couscous: 'from-orange-400 to-red-500',
-};
-
-const categoryEmojis: Record<string, string> = {
-  tajins:   '🫕',
-  salads:   '🥗',
-  briwat:   '🥟',
-  couscous: '🍲',
 };
 
 export default function MenuCard({ item }: Props) {
@@ -38,7 +33,6 @@ export default function MenuCard({ item }: Props) {
 
   const badge = item.badge ? badgeConfig[item.badge] : null;
   const gradient = categoryGradients[item.category] ?? 'from-gray-400 to-gray-500';
-  const emoji = categoryEmojis[item.category] ?? '🍽️';
   const hasImage = item.image && !imgError;
 
   function openDetail() {
@@ -61,7 +55,7 @@ export default function MenuCard({ item }: Props) {
               onError={() => setImgError(true)}
             />
           ) : (
-            <span className="text-4xl">{emoji}</span>
+            <CategoryIcon category={item.category} className="w-10 h-10 text-white opacity-80" />
           )}
         </div>
 
@@ -100,7 +94,8 @@ export default function MenuCard({ item }: Props) {
       {/* Text side */}
       <div className="flex-1 min-w-0 pl-1">
         {badge && (
-          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold mb-1.5 ${badge.className}`}>
+          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold mb-1.5 ${badge.className}`}>
+            <badge.Icon className="w-3 h-3" />
             {badge.label}
           </span>
         )}

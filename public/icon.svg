@@ -1,6 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="100" fill="#f59e0b"/>
   <rect x="30" y="30" width="452" height="452" rx="70" fill="#d97706"/>
-  <text x="256" y="320" font-size="260" text-anchor="middle" dominant-baseline="middle" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🫕</text>
-  <text x="256" y="440" font-size="52" font-weight="900" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" letter-spacing="2">YED LMIIMA</text>
+  <!-- Tajine silhouette (white) -->
+  <!-- Conical lid -->
+  <polygon points="256,95 395,350 117,350" fill="white"/>
+  <!-- Lid rim / base join -->
+  <rect x="110" y="340" width="292" height="28" rx="10" fill="white"/>
+  <!-- Base dish -->
+  <rect x="95" y="360" width="322" height="36" rx="18" fill="white"/>
+  <!-- Knob at tip -->
+  <circle cx="256" cy="86" r="22" fill="white"/>
+  <!-- Text -->
+  <text x="256" y="440" font-size="44" font-weight="900" text-anchor="middle" fill="white" font-family="system-ui,sans-serif" letter-spacing="2">YED LMIIMA</text>
 </svg>

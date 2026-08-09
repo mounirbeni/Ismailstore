@@ -3,9 +3,10 @@
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Search, Package, ChefHat, Bike, CheckCircle2, XCircle, Clock, MapPin, ArrowLeft } from 'lucide-react';
+import { Search, Package, ChefHat, Bike, CheckCircle2, XCircle, Clock, MapPin, ArrowLeft, Sparkles } from 'lucide-react';
 import { getOrderByNumber } from '@/app/lib/orders';
 import { Order } from '@/app/types/order';
+import CategoryIcon from '@/app/components/CategoryIcon';
 
 const STEPS = [
   { status: 'new',        Icon: Package,     label: 'Commande reçue',  desc: 'Votre commande a bien été reçue par le restaurant' },
@@ -15,7 +16,6 @@ const STEPS = [
 ];
 
 const STATUS_ORDER = ['new', 'preparing', 'on_the_way', 'delivered'];
-const categoryEmojis: Record<string, string> = { tajins: '🫕', salads: '🥗', briwat: '🥟', couscous: '🍲' };
 
 function TrackContent() {
   const searchParams = useSearchParams();
@@ -67,7 +67,7 @@ function TrackContent() {
             <button onClick={() => search()} disabled={loading} className="px-5 py-3 bg-amber-500 hover:bg-amber-600 disabled:bg-amber-300 text-white rounded-xl font-bold text-sm transition-colors flex items-center gap-2"><Search className="w-4 h-4" />{loading ? '...' : 'Chercher'}</button>
           </div>
         </div>
-        {notFound && !order && (<div className="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100"><div className="text-4xl mb-3">🔍</div><p className="font-semibold text-gray-900">Commande introuvable</p><p className="text-gray-400 text-sm mt-1">Vérifiez votre numéro et réessayez</p></div>)}
+        {notFound && !order && (<div className="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100"><div className="flex justify-center mb-3"><Search className="w-12 h-12 text-gray-200" /></div><p className="font-semibold text-gray-900">Commande introuvable</p><p className="text-gray-400 text-sm mt-1">Vérifiez votre numéro et réessayez</p></div>)}
         {order?.status === 'cancelled' && (
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-red-100">
             <div className="flex items-center gap-4">
@@ -102,13 +102,13 @@ function TrackContent() {
                   );
                 })}
               </div>
-              {order.status === 'delivered' && (<div className="mt-5 bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3"><span className="text-2xl">🎉</span><div><p className="font-bold text-green-800 text-sm">Commande livrée !</p><p className="text-green-600 text-xs">Merci pour votre confiance. Bon appétit !</p></div></div>)}
+              {order.status === 'delivered' && (<div className="mt-5 bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3"><div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0"><Sparkles className="w-5 h-5 text-green-600" /></div><div><p className="font-bold text-green-800 text-sm">Commande livrée !</p><p className="text-green-600 text-xs">Merci pour votre confiance. Bon appétit !</p></div></div>)}
             </div>
             <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
               <h3 className="font-bold text-gray-900 text-sm mb-4">Détails de la commande</h3>
               <div className="flex items-start gap-2 mb-4 text-sm"><MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" /><span className="text-gray-600">{order.customer.neighborhood} — {order.customer.address}</span></div>
               <div className="space-y-2">
-                {order.items.map(item => (<div key={item.id} className="flex items-center gap-2 text-sm"><span className="text-base">{categoryEmojis[item.category] ?? '🍽️'}</span><span className="flex-1 text-gray-700">{item.name}</span><span className="text-gray-400 text-xs">×{item.quantity}</span><span className="font-semibold text-gray-900 w-16 text-right">{item.price * item.quantity} DH</span></div>))}
+                {order.items.map(item => (<div key={item.id} className="flex items-center gap-2 text-sm"><CategoryIcon category={item.category} className="w-4 h-4 text-gray-400 flex-shrink-0" /><span className="flex-1 text-gray-700">{item.name}</span><span className="text-gray-400 text-xs">×{item.quantity}</span><span className="font-semibold text-gray-900 w-16 text-right">{item.price * item.quantity} DH</span></div>))}
                 <div className="flex justify-between text-xs text-gray-400 pt-2 border-t border-gray-100"><span>Livraison</span><span>{order.deliveryFee} DH</span></div>
                 <div className="flex justify-between font-bold text-gray-900 text-sm pt-1"><span>Total</span><span>{order.total} DH</span></div>
               </div>
@@ -116,7 +116,7 @@ function TrackContent() {
             {order.status !== 'delivered' && (<p className="text-center text-xs text-gray-400 flex items-center justify-center gap-1.5"><Clock className="w-3 h-3" />Actualisation automatique toutes les 10 secondes</p>)}
           </>
         )}
-        {!searched && (<div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-gray-100"><div className="text-6xl mb-4">📦</div><p className="font-bold text-gray-900 text-lg">Suivez votre commande</p><p className="text-gray-400 text-sm mt-2">Entrez votre numéro de commande<br />pour voir l&apos;état en temps réel</p></div>)}
+        {!searched && (<div className="bg-white rounded-2xl p-10 text-center shadow-sm border border-gray-100"><div className="flex justify-center mb-4"><Package className="w-16 h-16 text-gray-200" /></div><p className="font-bold text-gray-900 text-lg">Suivez votre commande</p><p className="text-gray-400 text-sm mt-2">Entrez votre numéro de commande<br />pour voir l&apos;état en temps réel</p></div>)}
       </div>
     </div>
   );

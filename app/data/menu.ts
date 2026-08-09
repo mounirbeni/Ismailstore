@@ -190,9 +190,9 @@ export const menuItems: MenuItem[] = [
 ];
 
 export const categories: Category[] = [
-  { id: 'all', name: 'All', icon: '🍽️', count: menuItems.length },
-  { id: 'tajins', name: 'Tajins', icon: '🫕', count: menuItems.filter(i => i.category === 'tajins').length },
-  { id: 'salads', name: 'Salades', icon: '🥗', count: menuItems.filter(i => i.category === 'salads').length },
-  { id: 'briwat', name: 'Briwat', icon: '🥟', count: menuItems.filter(i => i.category === 'briwat').length },
-  { id: 'couscous', name: 'Couscous', icon: '🍲', count: menuItems.filter(i => i.category === 'couscous').length },
+  { id: 'all',      name: 'Tout',     icon: 'all',      count: menuItems.length },
+  { id: 'tajins',   name: 'Tajins',   icon: 'tajins',   count: menuItems.filter(i => i.category === 'tajins').length },
+  { id: 'salads',   name: 'Salades',  icon: 'salads',   count: menuItems.filter(i => i.category === 'salads').length },
+  { id: 'briwat',   name: 'Briwat',   icon: 'briwat',   count: menuItems.filter(i => i.category === 'briwat').length },
+  { id: 'couscous', name: 'Couscous', icon: 'couscous', count: menuItems.filter(i => i.category === 'couscous').length },
 ];

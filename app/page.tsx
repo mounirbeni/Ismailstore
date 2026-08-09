@@ -26,7 +26,7 @@ export default function Home() {
       .then(data => {
         setMenuItems(data.items);
         setCategories([
-          { id: 'all', name: 'Tout', icon: '🍽️', count: data.items.length },
+          { id: 'all', name: 'Tout', icon: 'all', count: data.items.length },
           ...data.categories,
         ]);
       })

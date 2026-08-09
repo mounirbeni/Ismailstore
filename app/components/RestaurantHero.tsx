@@ -1,6 +1,7 @@
 'use client';
 
-import { Heart, Package, ChevronRight, Zap, Star, Clock, MapPin } from 'lucide-react';
+import { Heart, Package, ChevronRight, Zap, Star, Clock, MapPin, ChefHat, Soup, Cookie, Leaf, Landmark } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
@@ -113,8 +114,14 @@ export default function RestaurantHero() {
 
           {/* Tags */}
           <div className="flex gap-1.5 flex-wrap">
-            {['🫕 Tajine', '🍲 Couscous', '🥟 Briwat', '🌿 Naturel', '🕌 Traditionnel'].map(tag => (
-              <span key={tag} className="px-2.5 py-1 bg-gray-50 text-gray-600 rounded-xl text-xs font-semibold border border-gray-100">{tag}</span>
+            {([
+              { Icon: ChefHat as LucideIcon, label: 'Tajine' },
+              { Icon: Soup as LucideIcon, label: 'Couscous' },
+              { Icon: Cookie as LucideIcon, label: 'Briwat' },
+              { Icon: Leaf as LucideIcon, label: 'Naturel' },
+              { Icon: Landmark as LucideIcon, label: 'Traditionnel' },
+            ]).map(({ Icon, label }) => (
+              <span key={label} className="flex items-center gap-1 px-2.5 py-1 bg-gray-50 text-gray-600 rounded-xl text-xs font-semibold border border-gray-100"><Icon className="w-3 h-3" />{label}</span>
             ))}
           </div>
 
@@ -144,9 +151,15 @@ export default function RestaurantHero() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/25" />
           {/* Tags at bottom */}
           <div className="absolute bottom-4 left-8 flex items-center gap-2">
-            {['🫕 Tajine', '🍲 Couscous', '🥟 Briwat', '🌿 Naturel', '🕌 Halal'].map(tag => (
-              <span key={tag} className="px-3 py-1 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold rounded-full border border-white/20">
-                {tag}
+            {([
+              { Icon: ChefHat as LucideIcon, label: 'Tajine' },
+              { Icon: Soup as LucideIcon, label: 'Couscous' },
+              { Icon: Cookie as LucideIcon, label: 'Briwat' },
+              { Icon: Leaf as LucideIcon, label: 'Naturel' },
+              { Icon: Landmark as LucideIcon, label: 'Halal' },
+            ]).map(({ Icon, label }) => (
+              <span key={label} className="flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold rounded-full border border-white/20">
+                <Icon className="w-3 h-3" />{label}
               </span>
             ))}
           </div>

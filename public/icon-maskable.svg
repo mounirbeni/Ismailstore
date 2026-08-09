@@ -1,4 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" fill="#f59e0b"/>
-  <text x="256" y="290" font-size="260" text-anchor="middle" dominant-baseline="middle" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🫕</text>
+  <!-- Tajine silhouette (white), centered in safe zone ~10% inset -->
+  <!-- Conical lid -->
+  <polygon points="256,110 385,345 127,345" fill="white"/>
+  <!-- Lid rim -->
+  <rect x="120" y="335" width="272" height="28" rx="10" fill="white"/>
+  <!-- Base dish -->
+  <rect x="108" y="355" width="296" height="36" rx="18" fill="white"/>
+  <!-- Knob at tip -->
+  <circle cx="256" cy="101" r="20" fill="white"/>
 </svg>

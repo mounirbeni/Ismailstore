@@ -1,6 +1,7 @@
 'use client';
 
 import { Category } from '@/app/data/menu';
+import CategoryIcon from './CategoryIcon';
 
 interface Props {
   active: string;
@@ -20,7 +21,7 @@ export default function CategoryTabs({ active, onSelect, categories }: Props) {
               active === cat.id ? 'bg-amber-500 text-white shadow-md shadow-amber-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
-            <span>{cat.icon}</span>
+            <CategoryIcon category={cat.id} className="w-4 h-4" />
             <span>{cat.name}</span>
             <span className={`text-xs px-1.5 py-0.5 rounded-full ${active === cat.id ? 'bg-white/25 text-white' : 'bg-gray-200 text-gray-500'}`}>{cat.count}</span>
           </button>

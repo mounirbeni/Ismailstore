@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { Plus, Star } from 'lucide-react';
 import { MenuItem } from '@/app/data/menu';
 import { useCart } from '@/app/context/CartContext';
 import MenuCard from './MenuCard';
-import { Plus } from 'lucide-react';
+import CategoryIcon from './CategoryIcon';
 
 interface Props {
   activeCategory: string;
@@ -18,18 +19,11 @@ const categoryGradients: Record<string, string> = {
   couscous: 'from-orange-400 to-red-500',
 };
 
-const categoryEmojis: Record<string, string> = {
-  tajins:   '🫕',
-  salads:   '🥗',
-  briwat:   '🥟',
-  couscous: '🍲',
-};
-
-const sectionTitles: Record<string, { title: string; subtitle: string; icon: string }> = {
-  tajins:   { title: 'Tajins & Tanjia', subtitle: 'Mijotés à la marocaine',    icon: '🫕' },
-  salads:   { title: 'Salades',         subtitle: 'Entrées et accompagnements', icon: '🥗' },
-  briwat:   { title: 'Briwat',          subtitle: 'Feuilletés croustillants',   icon: '🥟' },
-  couscous: { title: 'Couscous',        subtitle: 'Semoule à la vapeur',        icon: '🍲' },
+const sectionTitles: Record<string, { title: string; subtitle: string }> = {
+  tajins:   { title: 'Tajins & Tanjia', subtitle: 'Mijotés à la marocaine' },
+  salads:   { title: 'Salades',         subtitle: 'Entrées et accompagnements' },
+  briwat:   { title: 'Briwat',          subtitle: 'Feuilletés croustillants' },
+  couscous: { title: 'Couscous',        subtitle: 'Semoule à la vapeur' },
 };
 
 function PopularCard({ item }: { item: MenuItem }) {
@@ -37,7 +31,6 @@ function PopularCard({ item }: { item: MenuItem }) {
   const cartItem = state.items.find(i => i.id === item.id);
   const qty = cartItem?.quantity ?? 0;
   const gradient = categoryGradients[item.category] ?? 'from-gray-400 to-gray-500';
-  const emoji = categoryEmojis[item.category] ?? '🍽️';
   const [imgError, setImgError] = useState(false);
   const hasImage = item.image && !imgError;
 
@@ -50,7 +43,7 @@ function PopularCard({ item }: { item: MenuItem }) {
         {hasImage ? (
           <img src={item.image} alt={item.name} className="w-full h-full object-cover" onError={() => setImgError(true)} />
         ) : (
-          <span className="text-5xl">{emoji}</span>
+          <CategoryIcon category={item.category} className="w-12 h-12 text-white opacity-80" />
         )}
         {qty > 0 && (
           <span className="absolute top-2 right-2 bg-amber-500 text-white text-xs font-black w-5 h-5 rounded-full flex items-center justify-center">
@@ -82,7 +75,7 @@ function SectionHeader({ cat }: { cat: string }) {
   if (!info) return null;
   return (
     <div className="flex items-center gap-3 px-4 py-3 bg-white sticky top-[49px] lg:top-0 z-10 border-b border-gray-50">
-      <span className="text-xl">{info.icon}</span>
+      <CategoryIcon category={cat} className="w-5 h-5 text-amber-500" />
       <div>
         <h2 className="font-black text-gray-900 text-base leading-none">{info.title}</h2>
         <p className="text-gray-400 text-xs mt-0.5">{info.subtitle}</p>
@@ -114,7 +107,10 @@ export default function MenuSection({ activeCategory, menuItems }: Props) {
       {popular.length > 0 && (
         <div className="mb-2">
           <div className="px-4 pt-4 pb-3">
-            <h2 className="font-black text-gray-900 text-base">⭐ Les plus populaires</h2>
+            <h2 className="flex items-center gap-2 font-black text-gray-900 text-base">
+              <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
+              Les plus populaires
+            </h2>
             <p className="text-gray-400 text-xs mt-0.5">Les plats préférés de nos clients</p>
           </div>
           <div className="flex gap-3 px-4 pb-4 overflow-x-auto scrollbar-hide">

@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Plus, Minus } from 'lucide-react';
+import { X, Plus, Minus, Star, Sparkles, Leaf, Flame } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
+import CategoryIcon from './CategoryIcon';
 
-const badgeConfig: Record<string, { label: string; className: string; icon: string }> = {
-  popular:    { label: 'Populaire',  className: 'bg-amber-100 text-amber-700',  icon: '⭐' },
-  new:        { label: 'Nouveau',    className: 'bg-blue-100 text-blue-700',    icon: '✨' },
-  vegetarian: { label: 'Végétarien', className: 'bg-green-100 text-green-700',  icon: '🌿' },
-  spicy:      { label: 'Épicé',      className: 'bg-red-100 text-red-700',      icon: '🌶️' },
+const badgeConfig: Record<string, { label: string; className: string; Icon: LucideIcon }> = {
+  popular:    { label: 'Populaire',  className: 'bg-amber-100 text-amber-700',  Icon: Star },
+  new:        { label: 'Nouveau',    className: 'bg-blue-100 text-blue-700',    Icon: Sparkles },
+  vegetarian: { label: 'Végétarien', className: 'bg-green-100 text-green-700',  Icon: Leaf },
+  spicy:      { label: 'Épicé',      className: 'bg-red-100 text-red-700',      Icon: Flame },
 };
 
 const categoryGradients: Record<string, string> = {
@@ -16,13 +18,6 @@ const categoryGradients: Record<string, string> = {
   salads:   'from-green-400 to-emerald-500',
   briwat:   'from-yellow-400 to-amber-500',
   couscous: 'from-orange-400 to-red-500',
-};
-
-const categoryEmojis: Record<string, string> = {
-  tajins:   '🫕',
-  salads:   '🥗',
-  briwat:   '🥟',
-  couscous: '🍲',
 };
 
 export default function ProductModal() {
@@ -59,7 +54,6 @@ export default function ProductModal() {
 
   const badge = item.badge ? badgeConfig[item.badge] : null;
   const gradient = categoryGradients[item.category] ?? 'from-gray-400 to-gray-500';
-  const emoji = categoryEmojis[item.category] ?? '🍽️';
   const totalPrice = qty * item.price;
 
   return (
@@ -76,7 +70,7 @@ export default function ProductModal() {
             {item.image ? (
               <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
             ) : (
-              <span className="text-8xl drop-shadow-lg">{emoji}</span>
+              <CategoryIcon category={item.category} className="w-20 h-20 text-white opacity-80 drop-shadow-lg" />
             )}
             <button
               onClick={close}
@@ -86,7 +80,7 @@ export default function ProductModal() {
             </button>
             {badge && (
               <span className={`absolute bottom-4 left-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${badge.className}`}>
-                <span>{badge.icon}</span>
+                <badge.Icon className="w-3 h-3" />
                 {badge.label}
               </span>
             )}

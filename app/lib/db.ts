@@ -54,10 +54,10 @@ export async function initDB() {
   if (Number(catRows[0].count) === 0) {
     await sql`
       INSERT INTO categories (id, name, icon, sort_order) VALUES
-        ('tajins',   'Tajins',   '🫕', 1),
-        ('salads',   'Salades',  '🥗', 2),
-        ('briwat',   'Briwat',   '🥟', 3),
-        ('couscous', 'Couscous', '🍲', 4)
+        ('tajins',   'Tajins',   'tajins',   1),
+        ('salads',   'Salades',  'salads',   2),
+        ('briwat',   'Briwat',   'briwat',   3),
+        ('couscous', 'Couscous', 'couscous', 4)
     `;
   }
 

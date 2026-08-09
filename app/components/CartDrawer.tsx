@@ -1,16 +1,10 @@
 'use client';
 
-import { X, Minus, Plus, ShoppingBag, Trash2, AlertCircle } from 'lucide-react';
+import { X, Minus, Plus, ShoppingBag, Trash2, AlertCircle, ShoppingCart, Banknote, ChefHat } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
+import CategoryIcon from './CategoryIcon';
 
 const MIN_ORDER = 50;
-
-const categoryEmojis: Record<string, string> = {
-  tajins:   '🫕',
-  salads:   '🥗',
-  briwat:   '🥟',
-  couscous: '🍲',
-};
 
 export default function CartDrawer() {
   const { state, dispatch, totalItems, totalPrice } = useCart();
@@ -63,7 +57,7 @@ export default function CartDrawer() {
 
           {/* Restaurant banner */}
           <div className="mx-4 mb-1 px-4 py-2.5 bg-amber-50 border border-amber-100 rounded-2xl flex items-center gap-3 flex-shrink-0">
-            <span className="text-xl">🫕</span>
+            <ChefHat className="w-5 h-5 text-amber-500 flex-shrink-0" />
             <div>
               <p className="font-bold text-gray-900 text-sm">Yed Lmiima</p>
               <p className="text-gray-400 text-xs">Livraison · Marrakech</p>
@@ -74,7 +68,7 @@ export default function CartDrawer() {
           <div className="flex-1 overflow-y-auto">
             {state.items.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8 py-16">
-                <div className="text-6xl">🛒</div>
+                <ShoppingCart className="w-14 h-14 text-amber-200" />
                 <p className="text-gray-900 font-bold text-lg">Panier vide</p>
                 <p className="text-gray-400 text-sm">Ajoutez des plats depuis le menu</p>
                 <button
@@ -88,18 +82,15 @@ export default function CartDrawer() {
               <div className="px-4 pt-2 pb-4 space-y-1">
                 {state.items.map(item => (
                   <div key={item.id} className="flex items-center gap-3 py-3 border-b border-gray-50 last:border-0">
-                    {/* Emoji thumb */}
-                    <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center text-xl flex-shrink-0">
-                      {categoryEmojis[item.category] ?? '🍽️'}
+                    <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0">
+                      <CategoryIcon category={item.category} className="w-5 h-5 text-amber-500" />
                     </div>
 
-                    {/* Name + price */}
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-gray-900 text-sm leading-snug truncate">{item.name}</p>
                       <p className="text-amber-600 font-black text-sm">{item.price} DH</p>
                     </div>
 
-                    {/* Qty controls */}
                     <div className="flex items-center gap-1.5 bg-gray-100 rounded-xl p-1">
                       <button
                         onClick={() => dispatch({ type: 'UPDATE_QUANTITY', payload: { id: item.id, quantity: item.quantity - 1 } })}
@@ -116,7 +107,6 @@ export default function CartDrawer() {
                       </button>
                     </div>
 
-                    {/* Delete */}
                     <button
                       onClick={() => dispatch({ type: 'REMOVE_ITEM', payload: item.id })}
                       className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
@@ -141,7 +131,6 @@ export default function CartDrawer() {
                 </div>
               )}
 
-              {/* Totals */}
               <div className="space-y-1.5">
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>Sous-total</span>
@@ -171,7 +160,10 @@ export default function CartDrawer() {
                   : `Minimum 50 DH requis`}
               </button>
 
-              <p className="text-center text-xs text-gray-400">💵 Paiement en espèces à la livraison</p>
+              <div className="flex items-center justify-center gap-1.5 text-xs text-gray-400">
+                <Banknote className="w-3 h-3" />
+                <span>Paiement en espèces à la livraison</span>
+              </div>
             </div>
           )}
         </div>
