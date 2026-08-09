@@ -1,6 +1,6 @@
 'use client';
 
-import { Star, Package, MapPin, Zap } from 'lucide-react';
+import { Star, Package, MapPin, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -52,9 +52,14 @@ export default function DesktopHeader() {
           <span>Marrakech</span>
         </div>
         <span className="text-gray-200">·</span>
-        <div className="flex items-center gap-1.5">
-          <Zap className="w-3.5 h-3.5 text-green-500" />
-          <span className="text-green-600 font-semibold">Livraison gratuite</span>
+        <div className="relative flex items-center gap-1.5 px-2.5 py-1 bg-green-50 border border-green-300 rounded-full delivery-glow">
+          {/* Ping dot */}
+          <span className="flex h-2.5 w-2.5 flex-shrink-0">
+            <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-green-400 opacity-75" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500" />
+          </span>
+          <Sparkles className="w-3.5 h-3.5 text-green-400 animate-bounce flex-shrink-0" />
+          <span className="text-shimmer font-black text-sm">Livraison gratuite</span>
         </div>
         <span className="text-gray-200">·</span>
         <span>Min. 50 DH</span>
