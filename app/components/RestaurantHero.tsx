@@ -127,16 +127,16 @@ export default function RestaurantHero() {
 
           {/* Delivery info grid */}
           <div className="mt-3 grid grid-cols-2 gap-2">
-            <div className="relative bg-green-50 rounded-xl px-3 py-2.5 text-center border border-green-200 overflow-visible">
+            <div className="relative bg-green-50 rounded-xl px-3 py-2.5 text-center border border-green-300 delivery-glow overflow-visible">
               {/* Ping indicator */}
               <span className="absolute -top-1 -right-1 flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                 <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500" />
               </span>
               <p className="text-[10px] text-gray-400 font-medium mb-0.5">Livraison</p>
-              <p className="text-sm font-black text-green-700 flex items-center justify-center gap-1">
-                <Sparkles className="w-3 h-3 text-green-500 animate-bounce" />
-                Gratuite
+              <p className="font-black flex items-center justify-center gap-1">
+                <Sparkles className="w-3.5 h-3.5 text-green-400 animate-bounce flex-shrink-0" />
+                <span className="text-shimmer text-base">Gratuite</span>
               </p>
             </div>
             <div className="bg-amber-50 rounded-xl px-3 py-2.5 text-center border border-amber-100">

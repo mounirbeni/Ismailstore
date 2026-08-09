@@ -25,3 +25,28 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Continuous shimmer sweep across text */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+.text-shimmer {
+  background: linear-gradient(90deg, #15803d 20%, #4ade80 45%, #86efac 50%, #4ade80 55%, #15803d 80%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 2.2s linear infinite;
+}
+
+/* Continuous green glow pulse on the delivery box */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  50%       { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);  }
+}
+
+.delivery-glow {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
