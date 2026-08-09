@@ -155,8 +155,8 @@ export const menuItems: MenuItem[] = [
   // Safa — custom order
   {
     id: 'safa',
-    name: 'Safa',
-    description: 'Couscous sucré-salé garni de tfaya (oignons caramélisés aux raisins secs), amandes grillées et cannelle — disponible en plusieurs tailles et garnitures selon votre choix',
+    name: 'Sefa',
+    description: 'Vermicelles marocaines sucrées-salées, préparées à la vapeur et garnies de tfaya (oignons caramélisés aux raisins secs), d\'amandes grillées et de cannelle — disponible en plusieurs tailles et garnitures selon votre choix.',
     price: 0,
     category: 'couscous',
     image: '/images/safa.jpg',
