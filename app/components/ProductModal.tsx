@@ -14,6 +14,7 @@ const badgeConfig: Record<string, { label: string; className: string; Icon: Luci
 };
 
 const RESTAURANT_PHONE = '212693493661';
+const RESTAURANT_CALL = '0649748990';
 
 const categoryGradients: Record<string, string> = {
   tajins:   'from-amber-400 to-orange-500',
@@ -115,7 +116,7 @@ export default function ProductModal() {
                 </div>
                 <div className="flex gap-3">
                   <a
-                    href={`tel:+${RESTAURANT_PHONE}`}
+                    href={`tel:${RESTAURANT_CALL}`}
                     className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-blue-500 hover:bg-blue-600 text-white font-black text-base transition-all active:scale-95 shadow-lg shadow-blue-200"
                   >
                     <Phone className="w-5 h-5" />
