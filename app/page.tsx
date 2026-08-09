@@ -11,6 +11,7 @@ import ProductModal from '@/app/components/ProductModal';
 import DesktopHeader from '@/app/components/DesktopHeader';
 import DesktopCartPanel from '@/app/components/DesktopCartPanel';
 import DesktopCategorySidebar from '@/app/components/DesktopCategorySidebar';
+import FreeDeliveryBanner from '@/app/components/FreeDeliveryBanner';
 import { useCart } from '@/app/context/CartContext';
 import { MenuItem, Category, menuItems as staticItems, categories as staticCats } from '@/app/data/menu';
 
@@ -81,6 +82,9 @@ export default function Home() {
         <CartButton />
         <CartDrawer />
       </div>
+
+      {/* Free delivery popup */}
+      <FreeDeliveryBanner />
 
       {/* Shared modals */}
       <ProductModal />

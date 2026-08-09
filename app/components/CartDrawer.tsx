@@ -9,7 +9,7 @@ const MIN_ORDER = 50;
 export default function CartDrawer() {
   const { state, dispatch, totalItems, totalPrice } = useCart();
 
-  const deliveryFee = 15;
+  const deliveryFee = 0;
   const total = totalPrice + deliveryFee;
   const canCheckout = totalPrice >= MIN_ORDER;
   const remaining = MIN_ORDER - totalPrice;
@@ -138,7 +138,7 @@ export default function CartDrawer() {
                 </div>
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>Livraison</span>
-                  <span className="font-semibold text-gray-700">15 DH</span>
+                  <span className="font-semibold text-green-600">Gratuit</span>
                 </div>
                 <div className="flex justify-between font-black text-gray-900 text-base pt-2 border-t border-gray-100">
                   <span>Total</span>

@@ -10,7 +10,7 @@ const geist = Geist({
 
 export const metadata: Metadata = {
   title: "Yed Lmiima — Cuisine Marocaine Authentique",
-  description: "Commandez vos tajines, couscous, briwat et salades marocains à Marrakech. Livraison rapide 15–25 DH.",
+  description: "Commandez vos tajines, couscous, briwat et salades marocains à Marrakech. Livraison gratuite — offre limitée.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

@@ -83,7 +83,7 @@ export function calcDeliveryInfo(neighborhood: string): DeliveryInfo {
 }
 
 export function calcDeliveryFee(_neighborhood: string): number {
-  return 15;
+  return 0;
 }
 
 export function getArrivalTime(minutes: number): string {
