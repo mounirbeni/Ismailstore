@@ -98,7 +98,7 @@ export default function ProductModal() {
             <div className="flex items-start justify-between gap-4 mb-2">
               <h2 className="font-black text-gray-900 text-xl leading-tight flex-1">{item.name}</h2>
               {item.customOrder
-                ? <span className="text-green-600 font-bold text-sm whitespace-nowrap">Prix sur demande</span>
+                ? <span className="text-green-600 font-bold text-sm whitespace-nowrap">Sur commande</span>
                 : <span className="text-amber-600 font-black text-xl whitespace-nowrap">{item.price} DH</span>
               }
             </div>
@@ -110,8 +110,8 @@ export default function ProductModal() {
               /* Custom order CTA */
               <div className="space-y-3">
                 <div className="bg-green-50 border border-green-100 rounded-2xl px-4 py-3 text-center">
-                  <p className="text-gray-700 text-sm font-semibold">Commande personnalisée</p>
-                  <p className="text-gray-400 text-xs mt-1">Contactez-nous pour choisir vos options et obtenir le prix</p>
+                  <p className="text-gray-700 text-sm font-semibold">Commande sur mesure</p>
+                  <p className="text-gray-400 text-xs mt-1">Contactez notre équipe pour personnaliser votre commande et obtenir le tarif</p>
                 </div>
                 <a
                   href={`https://wa.me/${RESTAURANT_PHONE}?text=${encodeURIComponent(`Bonjour, je souhaite commander "${item.name}" et avoir des informations sur les options de personnalisation et le prix.`)}`}

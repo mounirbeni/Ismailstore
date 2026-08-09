@@ -114,7 +114,7 @@ export default function MenuCard({ item }: Props) {
         <h3 className="font-bold text-gray-900 text-sm leading-snug">{item.name}</h3>
         <p className="text-gray-400 text-xs mt-1 line-clamp-2 leading-relaxed">{item.description}</p>
         {item.customOrder
-          ? <p className="text-green-600 font-semibold text-sm mt-2">Prix sur demande</p>
+          ? <p className="text-green-600 font-semibold text-xs mt-2">Contactez l&apos;équipe pour personnaliser</p>
           : <p className="text-amber-600 font-black text-base mt-2">{item.price} DH</p>
         }
       </div>
