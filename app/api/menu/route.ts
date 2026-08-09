@@ -13,6 +13,7 @@ function rowToItem(r: any) {
     image: r.image,
     badge: r.badge ?? undefined,
     available: r.available,
+    customOrder: r.custom_order ?? false,
   };
 }
 

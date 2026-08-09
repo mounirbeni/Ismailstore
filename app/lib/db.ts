@@ -37,18 +37,21 @@ export async function initDB() {
 
   await sql`
     CREATE TABLE IF NOT EXISTS menu_items (
-      id          TEXT    PRIMARY KEY,
-      name        TEXT    NOT NULL,
-      name_ar     TEXT,
-      description TEXT    NOT NULL,
-      price       NUMERIC NOT NULL,
-      category    TEXT    NOT NULL,
-      image       TEXT    NOT NULL DEFAULT '',
-      badge       TEXT,
-      available   BOOLEAN NOT NULL DEFAULT true,
-      sort_order  INTEGER NOT NULL DEFAULT 0
+      id           TEXT    PRIMARY KEY,
+      name         TEXT    NOT NULL,
+      name_ar      TEXT,
+      description  TEXT    NOT NULL,
+      price        NUMERIC NOT NULL,
+      category     TEXT    NOT NULL,
+      image        TEXT    NOT NULL DEFAULT '',
+      badge        TEXT,
+      available    BOOLEAN NOT NULL DEFAULT true,
+      sort_order   INTEGER NOT NULL DEFAULT 0,
+      custom_order BOOLEAN NOT NULL DEFAULT false
     )
   `;
+
+  await sql`ALTER TABLE menu_items ADD COLUMN IF NOT EXISTS custom_order BOOLEAN NOT NULL DEFAULT false`;
 
   const catRows = await sql`SELECT COUNT(*)::int AS count FROM categories`;
   if (Number(catRows[0].count) === 0) {
@@ -64,19 +67,21 @@ export async function initDB() {
   await Promise.all(
     SEED_ITEMS.map((item, i) =>
       sql`
-        INSERT INTO menu_items (id, name, description, price, category, image, badge, available, sort_order)
+        INSERT INTO menu_items (id, name, description, price, category, image, badge, available, sort_order, custom_order)
         VALUES (
           ${item.id}, ${item.name}, ${item.description}, ${item.price},
-          ${item.category}, ${item.image}, ${item.badge ?? null}, true, ${i}
+          ${item.category}, ${item.image}, ${item.badge ?? null}, true, ${i},
+          ${item.customOrder ?? false}
         )
         ON CONFLICT (id) DO UPDATE SET
-          name = EXCLUDED.name,
+          name        = EXCLUDED.name,
           description = EXCLUDED.description,
-          price = EXCLUDED.price,
-          category = EXCLUDED.category,
-          image = EXCLUDED.image,
-          badge = EXCLUDED.badge,
-          sort_order = EXCLUDED.sort_order
+          price       = EXCLUDED.price,
+          category    = EXCLUDED.category,
+          image       = EXCLUDED.image,
+          badge       = EXCLUDED.badge,
+          sort_order  = EXCLUDED.sort_order,
+          custom_order = EXCLUDED.custom_order
       `
     )
   );

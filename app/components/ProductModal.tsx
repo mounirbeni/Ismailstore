@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Plus, Minus, Star, Sparkles, Leaf, Flame, MessageCircle } from 'lucide-react';
+import { X, Plus, Minus, Star, Sparkles, Leaf, Flame, MessageCircle, Phone } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
 import CategoryIcon from './CategoryIcon';
@@ -98,7 +98,7 @@ export default function ProductModal() {
             <div className="flex items-start justify-between gap-4 mb-2">
               <h2 className="font-black text-gray-900 text-xl leading-tight flex-1">{item.name}</h2>
               {item.customOrder
-                ? <span className="text-green-600 font-bold text-sm whitespace-nowrap">Sur commande</span>
+                ? <span className="bg-amber-100 text-amber-700 text-xs font-bold px-2.5 py-1 rounded-full whitespace-nowrap">Sur commande</span>
                 : <span className="text-amber-600 font-black text-xl whitespace-nowrap">{item.price} DH</span>
               }
             </div>
@@ -109,19 +109,28 @@ export default function ProductModal() {
             {item.customOrder ? (
               /* Custom order CTA */
               <div className="space-y-3">
-                <div className="bg-green-50 border border-green-100 rounded-2xl px-4 py-3 text-center">
-                  <p className="text-gray-700 text-sm font-semibold">Commande sur mesure</p>
-                  <p className="text-gray-400 text-xs mt-1">Contactez notre équipe pour personnaliser votre commande et obtenir le tarif</p>
+                <div className="bg-amber-50 border border-amber-100 rounded-2xl px-4 py-3 text-center">
+                  <p className="text-gray-800 text-sm font-black">Personnalisez votre commande</p>
+                  <p className="text-gray-400 text-xs mt-1">Contactez notre équipe pour choisir vos options et obtenir le tarif</p>
                 </div>
-                <a
-                  href={`https://wa.me/${RESTAURANT_PHONE}?text=${encodeURIComponent(`Bonjour, je souhaite commander "${item.name}" et avoir des informations sur les options de personnalisation et le prix.`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-green-500 hover:bg-green-600 text-white font-black text-base transition-all active:scale-95 shadow-lg shadow-green-200"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  Contacter sur WhatsApp
-                </a>
+                <div className="flex gap-3">
+                  <a
+                    href={`tel:+${RESTAURANT_PHONE}`}
+                    className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-blue-500 hover:bg-blue-600 text-white font-black text-base transition-all active:scale-95 shadow-lg shadow-blue-200"
+                  >
+                    <Phone className="w-5 h-5" />
+                    Appeler
+                  </a>
+                  <a
+                    href={`https://wa.me/${RESTAURANT_PHONE}?text=${encodeURIComponent(`Bonjour, je souhaite commander "${item.name}" et avoir des informations sur les options de personnalisation et le prix.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-green-500 hover:bg-green-600 text-white font-black text-base transition-all active:scale-95 shadow-lg shadow-green-200"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    WhatsApp
+                  </a>
+                </div>
               </div>
             ) : (
               /* Quantity + CTA */
