@@ -8,6 +8,7 @@ export interface MenuItem {
   image: string;
   badge?: 'popular' | 'new' | 'vegetarian' | 'spicy';
   available?: boolean;
+  customOrder?: boolean; // No fixed price — customer contacts restaurant to customise & get quote
 }
 
 export interface Category {
@@ -150,6 +151,17 @@ export const menuItems: MenuItem[] = [
     category: 'briwat',
     image: '/images/briwat-veg.jpg',
     badge: 'vegetarian',
+  },
+  // Safa — custom order
+  {
+    id: 'safa',
+    name: 'Safa',
+    description: 'Couscous sucré-salé garni de tfaya (oignons caramélisés aux raisins secs), amandes grillées et cannelle — disponible en plusieurs tailles et garnitures selon votre choix',
+    price: 0,
+    category: 'couscous',
+    image: '/images/safa.jpg',
+    badge: 'new',
+    customOrder: true,
   },
   // Couscous
   {

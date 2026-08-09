@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Plus, Minus, Star, Sparkles, Leaf, Flame } from 'lucide-react';
+import { X, Plus, Minus, Star, Sparkles, Leaf, Flame, MessageCircle } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
 import CategoryIcon from './CategoryIcon';
@@ -12,6 +12,8 @@ const badgeConfig: Record<string, { label: string; className: string; Icon: Luci
   vegetarian: { label: 'Végétarien', className: 'bg-green-100 text-green-700',  Icon: Leaf },
   spicy:      { label: 'Épicé',      className: 'bg-red-100 text-red-700',      Icon: Flame },
 };
+
+const RESTAURANT_PHONE = '212693493661';
 
 const categoryGradients: Record<string, string> = {
   tajins:   'from-amber-400 to-orange-500',
@@ -95,54 +97,76 @@ export default function ProductModal() {
           <div className="px-6 pt-4 pb-6">
             <div className="flex items-start justify-between gap-4 mb-2">
               <h2 className="font-black text-gray-900 text-xl leading-tight flex-1">{item.name}</h2>
-              <span className="text-amber-600 font-black text-xl whitespace-nowrap">{item.price} DH</span>
+              {item.customOrder
+                ? <span className="text-green-600 font-bold text-sm whitespace-nowrap">Prix sur demande</span>
+                : <span className="text-amber-600 font-black text-xl whitespace-nowrap">{item.price} DH</span>
+              }
             </div>
             <p className="text-gray-500 text-sm leading-relaxed">{item.description}</p>
 
             <div className="h-px bg-gray-100 my-5" />
 
-            {/* Quantity + CTA */}
-            <div className="flex items-center gap-3">
-              {/* Stepper */}
-              <div className="flex items-center bg-gray-100 rounded-2xl p-1 gap-1">
-                <button
-                  onClick={() => setQty(q => Math.max(0, q - 1))}
-                  className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-gray-700 active:scale-90 transition-transform"
+            {item.customOrder ? (
+              /* Custom order CTA */
+              <div className="space-y-3">
+                <div className="bg-green-50 border border-green-100 rounded-2xl px-4 py-3 text-center">
+                  <p className="text-gray-700 text-sm font-semibold">Commande personnalisée</p>
+                  <p className="text-gray-400 text-xs mt-1">Contactez-nous pour choisir vos options et obtenir le prix</p>
+                </div>
+                <a
+                  href={`https://wa.me/${RESTAURANT_PHONE}?text=${encodeURIComponent(`Bonjour, je souhaite commander "${item.name}" et avoir des informations sur les options de personnalisation et le prix.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-green-500 hover:bg-green-600 text-white font-black text-base transition-all active:scale-95 shadow-lg shadow-green-200"
                 >
-                  <Minus className="w-4 h-4" />
-                </button>
-                <span className="w-8 text-center font-black text-gray-900 text-lg tabular-nums">{qty}</span>
+                  <MessageCircle className="w-5 h-5" />
+                  Contacter sur WhatsApp
+                </a>
+              </div>
+            ) : (
+              /* Quantity + CTA */
+              <div className="flex items-center gap-3">
+                {/* Stepper */}
+                <div className="flex items-center bg-gray-100 rounded-2xl p-1 gap-1">
+                  <button
+                    onClick={() => setQty(q => Math.max(0, q - 1))}
+                    className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-gray-700 active:scale-90 transition-transform"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span className="w-8 text-center font-black text-gray-900 text-lg tabular-nums">{qty}</span>
+                  <button
+                    onClick={() => setQty(q => q + 1)}
+                    className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-white active:scale-90 transition-transform"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Add button */}
                 <button
-                  onClick={() => setQty(q => q + 1)}
-                  className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-white active:scale-90 transition-transform"
+                  onClick={handleAdd}
+                  className={`flex-1 py-3.5 rounded-2xl font-bold text-sm transition-all active:scale-95 flex items-center justify-between px-4 ${
+                    qty === 0
+                      ? 'bg-red-500 hover:bg-red-600 text-white'
+                      : 'bg-amber-500 hover:bg-amber-600 text-white'
+                  }`}
                 >
-                  <Plus className="w-4 h-4" />
+                  <span>
+                    {qty === 0
+                      ? 'Retirer du panier'
+                      : cartItem
+                      ? 'Modifier'
+                      : 'Ajouter au panier'}
+                  </span>
+                  {qty > 0 && (
+                    <span className="bg-white/25 px-2.5 py-0.5 rounded-lg text-sm font-black">
+                      {totalPrice} DH
+                    </span>
+                  )}
                 </button>
               </div>
-
-              {/* Add button */}
-              <button
-                onClick={handleAdd}
-                className={`flex-1 py-3.5 rounded-2xl font-bold text-sm transition-all active:scale-95 flex items-center justify-between px-4 ${
-                  qty === 0
-                    ? 'bg-red-500 hover:bg-red-600 text-white'
-                    : 'bg-amber-500 hover:bg-amber-600 text-white'
-                }`}
-              >
-                <span>
-                  {qty === 0
-                    ? 'Retirer du panier'
-                    : cartItem
-                    ? 'Modifier'
-                    : 'Ajouter au panier'}
-                </span>
-                {qty > 0 && (
-                  <span className="bg-white/25 px-2.5 py-0.5 rounded-lg text-sm font-black">
-                    {totalPrice} DH
-                  </span>
-                )}
-              </button>
-            </div>
+            )}
           </div>
         </div>
       </div>

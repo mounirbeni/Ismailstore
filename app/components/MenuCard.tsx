@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Minus, Star, Sparkles, Leaf, Flame } from 'lucide-react';
+import { Plus, Minus, Star, Sparkles, Leaf, Flame, MessageCircle } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { MenuItem } from '@/app/data/menu';
 import { useCart } from '@/app/context/CartContext';
@@ -17,6 +17,8 @@ const badgeConfig: Record<string, { label: string; className: string; Icon: Luci
   vegetarian: { label: 'Végétarien', className: 'bg-green-100 text-green-700',  Icon: Leaf },
   spicy:      { label: 'Épicé',      className: 'bg-red-100 text-red-700',      Icon: Flame },
 };
+
+const RESTAURANT_PHONE = '212693493661';
 
 const categoryGradients: Record<string, string> = {
   tajins:   'from-amber-400 to-orange-500',
@@ -59,7 +61,17 @@ export default function MenuCard({ item }: Props) {
           )}
         </div>
 
-        {qty === 0 ? (
+        {item.customOrder ? (
+          <a
+            href={`https://wa.me/${RESTAURANT_PHONE}?text=${encodeURIComponent(`Bonjour, je souhaite commander "${item.name}" et avoir des informations sur les options et le prix.`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={e => e.stopPropagation()}
+            className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-green-500 shadow-lg shadow-green-200 flex items-center justify-center active:scale-90 transition-transform"
+          >
+            <MessageCircle className="w-4 h-4 text-white" />
+          </a>
+        ) : qty === 0 ? (
           <button
             onClick={e => {
               e.stopPropagation();
@@ -101,7 +113,10 @@ export default function MenuCard({ item }: Props) {
         )}
         <h3 className="font-bold text-gray-900 text-sm leading-snug">{item.name}</h3>
         <p className="text-gray-400 text-xs mt-1 line-clamp-2 leading-relaxed">{item.description}</p>
-        <p className="text-amber-600 font-black text-base mt-2">{item.price} DH</p>
+        {item.customOrder
+          ? <p className="text-green-600 font-semibold text-sm mt-2">Prix sur demande</p>
+          : <p className="text-amber-600 font-black text-base mt-2">{item.price} DH</p>
+        }
       </div>
     </div>
   );
